@@ -1,0 +1,3286 @@
+From 24e8fc67fcdf43e05e57e58bb067056dc62d8cad Mon Sep 17 00:00:00 2001
+From: ngdkhuong <nguyenkhuong31072002@gmail.com>
+Date: Mon, 29 Jul 2024 11:48:23 +0700
+Subject: [PATCH] push
+
+---
+ 0001-first-commit.patch | 2323 +++++++++++++++++++++++++++++++++++++++
+ multi_commit.patch      |  Bin 0 -> 206758 bytes
+ 2 files changed, 2323 insertions(+)
+ create mode 100644 0001-first-commit.patch
+ create mode 100644 multi_commit.patch
+
+diff --git a/0001-first-commit.patch b/0001-first-commit.patch
+new file mode 100644
+index 0000000..f8482c2
+--- /dev/null
++++ b/0001-first-commit.patch
+@@ -0,0 +1,2323 @@
++From 904eafac41f02b9571598771ae34c54fe43a57da Mon Sep 17 00:00:00 2001
++From: ngdkhuong <nguyenkhuong31072002@gmail.com>
++Date: Mon, 29 Jul 2024 11:46:59 +0700
++Subject: [PATCH] first commit
++
++---
++ README.md        |    2 +
++ client3.py       |   63 ++
++ client_test.py   |   25 +
++ requirements.txt |    1 +
++ server3.py       |  340 +++++++++
++ test.csv         | 1832 ++++++++++++++++++++++++++++++++++++++++++++++
++ 6 files changed, 2263 insertions(+)
++ create mode 100644 README.md
++ create mode 100644 client3.py
++ create mode 100644 client_test.py
++ create mode 100644 requirements.txt
++ create mode 100644 server3.py
++ create mode 100644 test.csv
++
++diff --git a/README.md b/README.md
++new file mode 100644
++index 0000000..14926f5
++--- /dev/null
+++++ b/README.md
++@@ -0,0 +1,2 @@
+++# JPMC Task 1
+++Starter repo for task 1 of the JPMC software engineering program
++diff --git a/client3.py b/client3.py
++new file mode 100644
++index 0000000..821458b
++--- /dev/null
+++++ b/client3.py
++@@ -0,0 +1,63 @@
+++################################################################################
+++#
+++#  Permission is hereby granted, free of charge, to any person obtaining a
+++#  copy of this software and associated documentation files (the "Software"),
+++#  to deal in the Software without restriction, including without limitation
+++#  the rights to use, copy, modify, merge, publish, distribute, sublicense,
+++#  and/or sell copies of the Software, and to permit persons to whom the
+++#  Software is furnished to do so, subject to the following conditions:
+++#
+++#  The above copyright notice and this permission notice shall be included in
+++#  all copies or substantial portions of the Software.
+++#
+++#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+++#  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+++#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+++#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+++#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+++#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+++#  DEALINGS IN THE SOFTWARE.
+++
+++import json
+++import random
+++import urllib.request
+++
+++# Server API URLs
+++QUERY = "http://localhost:8080/query?id={}"
+++
+++# 500 server request
+++N = 500
+++
+++
+++def getDataPoint(quote):
+++    """ Produce all the needed values to generate a datapoint """
+++    """ ------------- Update this function ------------- """
+++    stock = quote['stock']
+++    bid_price = float(quote['top_bid']['price'])
+++    ask_price = float(quote['top_ask']['price'])
+++    price = (bid_price + ask_price) / 2
+++    return stock, bid_price, ask_price, price
+++
+++
+++def getRatio(price_a, price_b):
+++    """ Get ratio of price_a and price_b """
+++    """ ------------- Update this function ------------- """
+++    if price_b == 0:
+++        return
+++    return price_a / price_b
+++
+++
+++# Main
+++if __name__ == "__main__":
+++    # Query the price once every N seconds.
+++    for _ in iter(range(N)):
+++        quotes = json.loads(urllib.request.urlopen(QUERY.format(random.random())).read())
+++
+++        """ ----------- Update to get the ratio --------------- """
+++        prices = {}
+++        for quote in quotes:
+++            stock, bid_price, ask_price, price = getDataPoint(quote)
+++            prices[stock] = price
+++            print("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
+++
+++        print("Ratio %s" % getRatio(prices["ABC"], prices["DEF"]))
++diff --git a/client_test.py b/client_test.py
++new file mode 100644
++index 0000000..af2bf26
++--- /dev/null
+++++ b/client_test.py
++@@ -0,0 +1,25 @@
+++import unittest
+++from client3 import getDataPoint
+++
+++class ClientTest(unittest.TestCase):
+++  def test_getDataPoint_calculatePrice(self):
+++    quotes = [
+++      {'top_ask': {'price': 121.2, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+++      {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+++    ]
+++    """ ------------ Add the assertion below ------------ """
+++
+++  def test_getDataPoint_calculatePriceBidGreaterThanAsk(self):
+++    quotes = [
+++      {'top_ask': {'price': 119.2, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+++      {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+++    ]
+++    """ ------------ Add the assertion below ------------ """
+++
+++
+++  """ ------------ Add more unit tests ------------ """
+++
+++
+++
+++if __name__ == '__main__':
+++    unittest.main()
++diff --git a/requirements.txt b/requirements.txt
++new file mode 100644
++index 0000000..f678e82
++--- /dev/null
+++++ b/requirements.txt
++@@ -0,0 +1 @@
+++python-dateutil==2.8.2
++\ No newline at end of file
++diff --git a/server3.py b/server3.py
++new file mode 100644
++index 0000000..1836de2
++--- /dev/null
+++++ b/server3.py
++@@ -0,0 +1,340 @@
+++################################################################################
+++#
+++#  Permission is hereby granted, free of charge, to any person obtaining a
+++#  copy of this software and associated documentation files (the "Software"),
+++#  to deal in the Software without restriction, including without limitation
+++#  the rights to use, copy, modify, merge, publish, distribute, sublicense,
+++#  and/or sell copies of the Software, and to permit persons to whom the
+++#  Software is furnished to do so, subject to the following conditions:
+++#
+++#  The above copyright notice and this permission notice shall be included in
+++#  all copies or substantial portions of the Software.
+++#
+++#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+++#  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+++#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+++#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+++#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+++#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+++#  DEALINGS IN THE SOFTWARE.
+++
+++import csv
+++# from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+++import http.server
+++import json
+++import operator
+++import os.path
+++import re
+++import threading
+++from datetime import timedelta, datetime
+++# from itertools import izip
+++from random import normalvariate, random
+++from socketserver import ThreadingMixIn
+++
+++import dateutil.parser
+++
+++################################################################################
+++#
+++# Config
+++
+++# Sim params
+++
+++REALTIME = True
+++SIM_LENGTH = timedelta(days=365 * 5)
+++MARKET_OPEN = datetime.today().replace(hour=0, minute=30, second=0)
+++
+++# Market parms
+++#       min  / max  / std
+++SPD = (2.0, 6.0, 0.1)
+++PX = (60.0, 150.0, 1)
+++FREQ = (12, 36, 50)
+++
+++# Trades
+++
+++OVERLAP = 4
+++
+++
+++################################################################################
+++#
+++# Test Data
+++
+++def bwalk(min, max, std):
+++    """ Generates a bounded random walk. """
+++    rng = max - min
+++    while True:
+++        max += normalvariate(0, std)
+++        yield abs((max % (rng * 2)) - rng) + min
+++
+++
+++def market(t0=MARKET_OPEN):
+++    """ Generates a random series of market conditions,
+++        (time, price, spread).
+++    """
+++    for hours, px, spd in zip(bwalk(*FREQ), bwalk(*PX), bwalk(*SPD)):
+++        yield t0, px, spd
+++        t0 += timedelta(hours=abs(hours))
+++
+++
+++def orders(hist):
+++    """ Generates a random set of limit orders (time, side, price, size) from
+++        a series of market conditions.
+++    """
+++    for t, px, spd in hist:
+++        stock = 'ABC' if random() > 0.5 else 'DEF'
+++        side, d = ('sell', 2) if random() > 0.5 else ('buy', -2)
+++        order = round(normalvariate(px + (spd / d), spd / OVERLAP), 2)
+++        size = int(abs(normalvariate(0, 100)))
+++        yield t, stock, side, order, size
+++
+++
+++################################################################################
+++#
+++# Order Book
+++
+++def add_book(book, order, size, _age=10):
+++    """ Add a new order and size to a book, and age the rest of the book. """
+++    yield order, size, _age
+++    for o, s, age in book:
+++        if age > 0:
+++            yield o, s, age - 1
+++
+++
+++def clear_order(order, size, book, op=operator.ge, _notional=0):
+++    """ Try to clear a sized order against a book, returning a tuple of
+++        (notional, new_book) if successful, and None if not.  _notional is a
+++        recursive accumulator and should not be provided by the caller.
+++    """
+++    (top_order, top_size, age), tail = book[0], book[1:]
+++    if op(order, top_order):
+++        _notional += min(size, top_size) * top_order
+++        sdiff = top_size - size
+++        if sdiff > 0:
+++            return _notional, list(add_book(tail, top_order, sdiff, age))
+++        elif len(tail) > 0:
+++            return clear_order(order, -sdiff, tail, op, _notional)
+++
+++
+++def clear_book(buy=None, sell=None):
+++    """ Clears all crossed orders from a buy and sell book, returning the new
+++        books uncrossed.
+++    """
+++    while buy and sell:
+++        order, size, _ = buy[0]
+++        new_book = clear_order(order, size, sell)
+++        if new_book:
+++            sell = new_book[1]
+++            buy = buy[1:]
+++        else:
+++            break
+++    return buy, sell
+++
+++
+++def order_book(orders, book, stock_name):
+++    """ Generates a series of order books from a series of orders.  Order books
+++        are mutable lists, and mutating them during generation will affect the
+++        next turn!
+++    """
+++    for t, stock, side, order, size in orders:
+++        if stock_name == stock:
+++            new = add_book(book.get(side, []), order, size)
+++            book[side] = sorted(new, reverse=side == 'buy', key=lambda x: x[0])
+++        bids, asks = clear_book(**book)
+++        yield t, bids, asks
+++
+++
+++################################################################################
+++#
+++# Test Data Persistence
+++
+++def generate_csv():
+++    """ Generate a CSV of order history. """
+++    with open('test.csv', 'wb') as f:
+++        writer = csv.writer(f)
+++        for t, stock, side, order, size in orders(market()):
+++            if t > MARKET_OPEN + SIM_LENGTH:
+++                break
+++            writer.writerow([t, stock, side, order, size])
+++
+++
+++def read_csv():
+++    """ Read a CSV or order history into a list. """
+++    with open('test.csv', 'rt') as f:
+++        for time, stock, side, order, size in csv.reader(f):
+++            yield dateutil.parser.parse(time), stock, side, float(order), int(size)
+++
+++
+++################################################################################
+++#
+++# Server
+++
+++class ThreadedHTTPServer(ThreadingMixIn, http.server.HTTPServer):
+++    """ Boilerplate class for a multithreaded HTTP Server, with working
+++        shutdown.
+++    """
+++    allow_reuse_address = True
+++
+++    def shutdown(self):
+++        """ Override MRO to shutdown properly. """
+++        self.socket.close()
+++        http.server.HTTPServer.shutdown(self)
+++
+++
+++def route(path):
+++    """ Decorator for a simple bottle-like web framework.  Routes path to the
+++        decorated method, with the rest of the path as an argument.
+++    """
+++
+++    def _route(f):
+++        setattr(f, '__route__', path)
+++        return f
+++
+++    return _route
+++
+++
+++def read_params(path):
+++    """ Read query parameters into a dictionary if they are parseable,
+++        otherwise returns None.
+++    """
+++    query = path.split('?')
+++    if len(query) > 1:
+++        query = query[1].split('&')
+++        return dict(map(lambda x: x.split('='), query))
+++
+++
+++def get(req_handler, routes):
+++    """ Map a request to the appropriate route of a routes instance. """
+++    for name, handler in routes.__class__.__dict__.items():
+++        if hasattr(handler, "__route__"):
+++            if None != re.search(handler.__route__, req_handler.path):
+++                req_handler.send_response(200)
+++                req_handler.send_header('Content-Type', 'application/json')
+++                req_handler.send_header('Access-Control-Allow-Origin', '*')
+++                req_handler.end_headers()
+++                params = read_params(req_handler.path)
+++                data = json.dumps(handler(routes, params)) + '\n'
+++                req_handler.wfile.write(bytes(data, encoding='utf-8'))
+++                return
+++
+++
+++def run(routes, host='0.0.0.0', port=8080):
+++    """ Runs a class as a server whose methods have been decorated with
+++        @route.
+++    """
+++
+++    class RequestHandler(http.server.BaseHTTPRequestHandler):
+++        def log_message(self, *args, **kwargs):
+++            pass
+++
+++        def do_GET(self):
+++            get(self, routes)
+++
+++    server = ThreadedHTTPServer((host, port), RequestHandler)
+++    thread = threading.Thread(target=server.serve_forever)
+++    thread.daemon = True
+++    thread.start()
+++    print('HTTP server started on port 8080')
+++    while True:
+++        from time import sleep
+++        sleep(1)
+++    server.shutdown()
+++    server.start()
+++    server.waitForThread()
+++
+++
+++################################################################################
+++#
+++# App
+++
+++ops = {
+++    'buy': operator.le,
+++    'sell': operator.ge,
+++}
+++
+++
+++class App(object):
+++    """ The trading game server application. """
+++
+++    def __init__(self):
+++        self._book_1 = dict()
+++        self._book_2 = dict()
+++        self._data_1 = order_book(read_csv(), self._book_1, 'ABC')
+++        self._data_2 = order_book(read_csv(), self._book_2, 'DEF')
+++        self._rt_start = datetime.now()
+++        self._sim_start, _, _ = next(self._data_1)
+++        self.read_10_first_lines()
+++
+++    @property
+++    def _current_book_1(self):
+++        for t, bids, asks in self._data_1:
+++            if REALTIME:
+++                while t > self._sim_start + (datetime.now() - self._rt_start):
+++                    yield t, bids, asks
+++            else:
+++                yield t, bids, asks
+++
+++    @property
+++    def _current_book_2(self):
+++        for t, bids, asks in self._data_2:
+++            if REALTIME:
+++                while t > self._sim_start + (datetime.now() - self._rt_start):
+++                    yield t, bids, asks
+++            else:
+++                yield t, bids, asks
+++
+++    def read_10_first_lines(self):
+++        for _ in iter(range(10)):
+++            next(self._data_1)
+++            next(self._data_2)
+++
+++    @route('/query')
+++    def handle_query(self, x):
+++        """ Takes no arguments, and yields the current top of the book;  the
+++            best bid and ask and their sizes
+++        """
+++        try:
+++            t1, bids1, asks1 = next(self._current_book_1)
+++            t2, bids2, asks2 = next(self._current_book_2)
+++        except Exception as e:
+++            print("error getting stocks...reinitalizing app")
+++            self.__init__()
+++            t1, bids1, asks1 = next(self._current_book_1)
+++            t2, bids2, asks2 = next(self._current_book_2)
+++        t = t1 if t1 > t2 else t2
+++        print('Query received @ t%s' % t)
+++        return [{
+++            'id': x and x.get('id', None),
+++            'stock': 'ABC',
+++            'timestamp': str(t),
+++            'top_bid': bids1 and {
+++                'price': bids1[0][0],
+++                'size': bids1[0][1]
+++            },
+++            'top_ask': asks1 and {
+++                'price': asks1[0][0],
+++                'size': asks1[0][1]
+++            }
+++        },
+++            {
+++                'id': x and x.get('id', None),
+++                'stock': 'DEF',
+++                'timestamp': str(t),
+++                'top_bid': bids2 and {
+++                    'price': bids2[0][0],
+++                    'size': bids2[0][1]
+++                },
+++                'top_ask': asks2 and {
+++                    'price': asks2[0][0],
+++                    'size': asks2[0][1]
+++                }
+++            }]
+++
+++
+++################################################################################
+++#
+++# Main
+++
+++if __name__ == '__main__':
+++    if not os.path.isfile('test.csv'):
+++        print("No data found, generating...")
+++        generate_csv()
+++    run(App())
++diff --git a/test.csv b/test.csv
++new file mode 100644
++index 0000000..e163e4c
++--- /dev/null
+++++ b/test.csv
++@@ -0,0 +1,1832 @@
+++2019-02-01 00:30:00.966511,ABC,buy,118.24,21
+++2019-02-01 16:29:33.406644,DEF,buy,120.09,71
+++2019-02-02 18:37:52.442361,ABC,buy,120.09,131
+++2019-02-03 11:49:54.753944,ABC,buy,118.13,145
+++2019-02-04 12:34:43.199076,ABC,sell,120.24,2
+++2019-02-05 04:03:01.708103,DEF,buy,110.79,52
+++2019-02-05 18:25:31.835007,ABC,buy,112.7,101
+++2019-02-06 08:07:20.411698,ABC,buy,115.46,245
+++2019-02-07 12:04:33.363229,DEF,buy,115.14,12
+++2019-02-08 05:45:58.422127,DEF,sell,117.87,74
+++2019-02-09 02:10:38.317086,ABC,buy,112.79,80
+++2019-02-10 10:07:43.237974,ABC,sell,116.63,183
+++2019-02-11 18:12:31.763344,ABC,buy,110.5,35
+++2019-02-13 00:41:03.061658,DEF,sell,117.51,84
+++2019-02-13 19:37:03.654348,DEF,buy,113.65,40
+++2019-02-14 08:26:51.287677,DEF,buy,112.39,54
+++2019-02-14 22:54:17.994967,DEF,sell,116.98,41
+++2019-02-15 19:51:35.120133,DEF,sell,116.9,16
+++2019-02-17 02:30:47.122289,ABC,buy,112.27,91
+++2019-02-17 19:35:22.154753,DEF,sell,116.05,105
+++2019-02-18 12:30:42.187256,DEF,buy,111.17,273
+++2019-02-19 17:08:20.400814,ABC,buy,108.62,92
+++2019-02-20 21:26:54.664490,ABC,sell,113.04,253
+++2019-02-21 12:31:57.442982,DEF,sell,114.47,68
+++2019-02-22 01:35:01.655558,DEF,buy,112.29,97
+++2019-02-23 06:36:37.717586,ABC,buy,111.24,93
+++2019-02-24 13:43:36.615682,ABC,sell,116.17,22
+++2019-02-25 04:54:36.476134,ABC,buy,109.03,108
+++2019-02-25 20:06:18.131320,ABC,buy,110.35,175
+++2019-02-27 03:31:20.961622,ABC,sell,111.65,74
+++2019-02-27 23:09:41.106498,ABC,buy,107.04,130
+++2019-02-28 21:40:40.238896,DEF,sell,111.68,156
+++2019-03-02 01:55:48.640233,ABC,sell,115.57,60
+++2019-03-03 00:10:38.079285,DEF,sell,113.62,14
+++2019-03-03 18:30:47.050607,ABC,buy,106.16,40
+++2019-03-04 09:05:05.419473,ABC,buy,107.53,68
+++2019-03-05 17:49:40.846183,ABC,sell,112.39,11
+++2019-03-06 06:40:35.041441,ABC,buy,106.94,60
+++2019-03-07 13:59:29.291951,ABC,buy,105.77,59
+++2019-03-08 23:35:56.746472,ABC,buy,109.2,56
+++2019-03-10 03:38:27.596382,ABC,sell,110.27,64
+++2019-03-11 10:23:52.781283,ABC,buy,105.63,27
+++2019-03-12 14:15:55.227949,DEF,sell,109.27,10
+++2019-03-13 07:01:35.342559,ABC,buy,106.37,37
+++2019-03-14 01:16:06.136558,DEF,sell,112.76,7
+++2019-03-14 21:42:08.012696,ABC,buy,108.74,12
+++2019-03-16 02:08:37.533436,ABC,buy,104.38,56
+++2019-03-16 23:04:36.166315,DEF,sell,109.83,25
+++2019-03-17 18:31:27.760441,ABC,buy,107.55,202
+++2019-03-18 12:38:13.606208,ABC,sell,113.12,0
+++2019-03-19 22:22:54.040153,DEF,sell,115.16,68
+++2019-03-20 23:02:25.850131,ABC,buy,111.62,145
+++2019-03-21 20:36:35.476887,DEF,sell,114.6,141
+++2019-03-22 09:43:03.471379,ABC,sell,116.77,70
+++2019-03-23 09:34:49.336990,DEF,buy,109.75,16
+++2019-03-23 22:04:26.812142,DEF,buy,109.85,14
+++2019-03-25 00:39:53.320423,ABC,sell,113.53,19
+++2019-03-26 06:01:58.895705,ABC,buy,110.41,118
+++2019-03-27 09:06:46.537723,ABC,sell,114.19,97
+++2019-03-28 13:44:48.249941,DEF,sell,116.33,14
+++2019-03-29 14:08:02.247788,ABC,buy,112.66,55
+++2019-03-30 04:50:16.044901,DEF,sell,115.76,111
+++2019-03-31 11:58:15.666679,DEF,sell,115.78,35
+++2019-04-01 11:55:24.073957,DEF,buy,110.1,19
+++2019-04-02 04:53:05.228984,ABC,sell,115.28,62
+++2019-04-02 20:23:26.130366,DEF,buy,111.14,24
+++2019-04-03 15:50:09.987424,ABC,buy,111.57,75
+++2019-04-04 12:52:41.254838,DEF,buy,109.53,136
+++2019-04-05 16:38:39.023546,ABC,buy,111.52,63
+++2019-04-06 12:41:48.755998,DEF,buy,110.7,9
+++2019-04-07 04:20:47.537559,ABC,buy,112.96,133
+++2019-04-08 11:05:03.621711,DEF,buy,112.11,227
+++2019-04-09 13:01:42.296983,DEF,sell,115.47,61
+++2019-04-10 21:05:44.760840,DEF,buy,113.29,121
+++2019-04-12 04:17:26.274648,ABC,buy,114.48,73
+++2019-04-13 08:44:06.013282,DEF,sell,117.04,23
+++2019-04-14 05:28:33.151392,ABC,buy,114.05,20
+++2019-04-15 09:42:14.426547,DEF,sell,119.2,7
+++2019-04-16 02:27:16.101261,ABC,sell,120.8,16
+++2019-04-16 19:15:07.422371,ABC,buy,116.4,231
+++2019-04-17 11:13:25.432400,DEF,sell,120.44,7
+++2019-04-18 00:07:04.768087,DEF,buy,114.18,5
+++2019-04-18 21:21:52.963034,DEF,buy,113.57,33
+++2019-04-19 17:55:29.018736,ABC,buy,112.19,147
+++2019-04-21 01:55:03.472619,DEF,buy,114.73,85
+++2019-04-22 04:35:30.585456,DEF,buy,114.65,40
+++2019-04-23 02:28:45.618826,DEF,buy,116.0,137
+++2019-04-23 22:37:20.868606,ABC,sell,123.37,47
+++2019-04-25 08:37:18.347364,DEF,buy,110.96,172
+++2019-04-26 09:57:36.379367,DEF,sell,118.25,48
+++2019-04-27 03:58:31.643303,ABC,sell,119.31,163
+++2019-04-28 15:42:01.718765,ABC,buy,114.54,2
+++2019-04-29 13:53:43.470320,ABC,sell,118.7,142
+++2019-04-30 17:16:37.357174,DEF,sell,119.9,79
+++2019-05-01 18:09:26.412464,DEF,sell,117.83,27
+++2019-05-02 12:55:21.152408,ABC,sell,117.47,129
+++2019-05-03 03:27:00.683917,DEF,buy,109.91,166
+++2019-05-04 09:54:42.317726,DEF,buy,112.99,76
+++2019-05-04 22:13:42.320289,ABC,sell,119.29,39
+++2019-05-06 08:39:32.855590,DEF,sell,120.09,140
+++2019-05-07 04:58:20.385951,DEF,buy,116.18,170
+++2019-05-07 22:01:00.410529,ABC,sell,116.95,57
+++2019-05-08 17:41:21.773503,DEF,buy,113.76,32
+++2019-05-09 06:42:58.665282,ABC,buy,114.83,85
+++2019-05-10 17:25:40.463745,ABC,buy,118.18,173
+++2019-05-11 11:27:20.728437,ABC,sell,122.4,145
+++2019-05-11 23:28:50.041898,ABC,buy,119.1,88
+++2019-05-13 04:54:35.255504,ABC,buy,119.61,83
+++2019-05-14 02:47:45.243607,DEF,buy,117.7,153
+++2019-05-14 23:36:31.044770,ABC,buy,120.17,23
+++2019-05-15 21:31:00.475836,ABC,buy,117.38,137
+++2019-05-16 10:57:03.222613,ABC,buy,118.2,51
+++2019-05-17 22:38:44.203711,ABC,buy,122.45,32
+++2019-05-18 20:14:43.073412,DEF,sell,128.29,9
+++2019-05-19 22:05:06.307934,DEF,buy,124.55,45
+++2019-05-20 11:07:09.737387,ABC,buy,122.44,212
+++2019-05-21 15:30:13.809274,DEF,sell,129.54,24
+++2019-05-22 06:30:16.274013,DEF,buy,123.52,38
+++2019-05-23 01:03:01.019365,DEF,buy,126.81,210
+++2019-05-24 03:20:49.396787,ABC,sell,131.8,15
+++2019-05-25 14:44:36.205029,DEF,buy,123.78,76
+++2019-05-26 03:51:11.892198,ABC,buy,125.45,58
+++2019-05-26 15:59:10.752224,DEF,buy,124.07,139
+++2019-05-27 18:17:22.506216,DEF,buy,125.02,30
+++2019-05-29 03:56:36.961704,DEF,buy,128.38,87
+++2019-05-29 23:39:55.619075,ABC,sell,133.01,94
+++2019-05-31 04:44:25.669327,ABC,buy,125.11,157
+++2019-06-01 09:31:01.535043,DEF,sell,127.94,145
+++2019-06-01 23:20:02.748345,DEF,buy,128.2,32
+++2019-06-03 06:03:02.129228,ABC,sell,132.12,133
+++2019-06-04 06:48:54.131871,DEF,buy,121.52,20
+++2019-06-05 18:16:13.667974,DEF,buy,127.09,175
+++2019-06-06 15:55:40.360587,ABC,sell,128.23,285
+++2019-06-07 04:46:10.130650,DEF,buy,127.89,55
+++2019-06-07 22:23:38.414203,ABC,buy,127.06,118
+++2019-06-09 07:38:03.278759,DEF,buy,127.45,183
+++2019-06-10 17:55:51.136003,ABC,sell,129.84,168
+++2019-06-11 15:36:36.077084,DEF,buy,128.03,123
+++2019-06-12 05:12:22.008019,DEF,sell,134.02,64
+++2019-06-12 17:23:28.290442,ABC,sell,136.91,101
+++2019-06-14 04:26:29.074847,ABC,sell,135.97,62
+++2019-06-15 14:22:10.678774,DEF,buy,133.08,127
+++2019-06-16 08:47:49.614759,ABC,sell,135.83,23
+++2019-06-17 06:08:15.942386,DEF,buy,132.59,141
+++2019-06-18 17:41:56.239316,DEF,buy,132.74,23
+++2019-06-19 13:56:40.309747,DEF,sell,138.34,55
+++2019-06-20 17:06:17.933853,ABC,buy,134.39,15
+++2019-06-22 01:35:13.509672,DEF,buy,137.94,29
+++2019-06-23 06:46:16.944986,DEF,buy,135.63,80
+++2019-06-24 04:25:32.950446,ABC,buy,137.31,38
+++2019-06-25 07:19:55.681960,DEF,buy,138.57,113
+++2019-06-26 03:16:48.667914,DEF,sell,141.57,53
+++2019-06-27 12:13:43.187161,ABC,sell,141.35,241
+++2019-06-28 22:29:06.771417,ABC,sell,145.12,7
+++2019-06-29 13:37:36.835703,ABC,sell,145.26,89
+++2019-06-30 14:07:19.603768,ABC,sell,146.4,153
+++2019-07-01 09:01:54.181301,ABC,buy,140.87,126
+++2019-07-02 01:35:36.426830,ABC,buy,138.12,38
+++2019-07-03 00:12:03.547053,ABC,sell,145.67,102
+++2019-07-03 18:43:52.573942,DEF,buy,140.16,5
+++2019-07-04 17:19:04.291722,DEF,sell,142.38,48
+++2019-07-05 07:52:01.660000,DEF,buy,137.85,195
+++2019-07-06 11:34:27.159495,ABC,sell,147.93,35
+++2019-07-07 02:45:38.691866,DEF,sell,145.32,59
+++2019-07-08 12:17:08.159629,ABC,sell,146.13,99
+++2019-07-09 04:59:29.551436,ABC,buy,141.94,17
+++2019-07-10 16:56:23.927825,ABC,buy,140.4,64
+++2019-07-11 13:05:39.316353,DEF,buy,141.97,6
+++2019-07-12 09:38:52.645459,DEF,sell,145.71,7
+++2019-07-13 09:02:36.194082,DEF,buy,140.39,1
+++2019-07-14 02:19:04.248606,ABC,sell,144.07,6
+++2019-07-15 00:22:36.272503,ABC,sell,146.98,17
+++2019-07-16 00:23:28.846209,DEF,sell,148.53,62
+++2019-07-16 14:40:44.616201,DEF,sell,146.53,9
+++2019-07-17 21:29:47.581678,ABC,sell,144.61,54
+++2019-07-19 03:59:26.479899,DEF,sell,152.75,17
+++2019-07-20 01:37:46.304516,ABC,sell,152.42,298
+++2019-07-21 04:03:38.750854,DEF,sell,155.48,260
+++2019-07-22 03:54:18.111829,ABC,buy,146.11,3
+++2019-07-23 07:02:47.671106,DEF,sell,150.36,83
+++2019-07-24 04:47:37.355947,DEF,buy,143.41,76
+++2019-07-25 16:13:09.593154,DEF,buy,144.64,50
+++2019-07-27 03:29:20.181943,ABC,buy,145.66,70
+++2019-07-28 10:42:55.073195,DEF,buy,146.63,40
+++2019-07-29 18:59:56.438486,DEF,buy,145.19,79
+++2019-07-30 07:30:49.755254,DEF,sell,152.46,58
+++2019-07-31 03:50:18.416632,ABC,buy,145.76,115
+++2019-07-31 22:31:28.042738,ABC,buy,142.53,108
+++2019-08-01 15:07:28.285327,ABC,buy,140.28,53
+++2019-08-02 05:50:43.865510,DEF,sell,145.33,39
+++2019-08-03 03:04:13.115818,ABC,buy,144.27,64
+++2019-08-04 06:59:41.946799,DEF,buy,143.39,134
+++2019-08-04 19:10:11.773469,DEF,buy,139.85,45
+++2019-08-06 03:03:58.960013,DEF,sell,146.89,82
+++2019-08-07 10:05:15.184090,DEF,sell,145.22,168
+++2019-08-08 14:38:26.590661,DEF,sell,149.04,33
+++2019-08-09 05:58:10.065983,ABC,sell,151.55,6
+++2019-08-10 16:34:14.522054,ABC,sell,151.23,103
+++2019-08-12 02:07:20.473439,ABC,sell,148.36,178
+++2019-08-12 16:34:53.398896,ABC,buy,144.26,26
+++2019-08-14 03:12:21.014012,DEF,buy,143.52,32
+++2019-08-15 09:05:12.063866,DEF,sell,150.59,41
+++2019-08-16 15:25:15.691706,DEF,sell,149.19,12
+++2019-08-17 11:33:16.927968,ABC,buy,144.13,115
+++2019-08-18 06:44:08.171191,DEF,sell,151.66,153
+++2019-08-19 00:26:56.076273,ABC,sell,149.82,179
+++2019-08-19 15:24:50.369502,DEF,buy,145.01,96
+++2019-08-20 06:26:24.045528,DEF,sell,150.54,156
+++2019-08-21 11:33:43.513404,ABC,buy,142.39,36
+++2019-08-22 13:36:42.052751,DEF,sell,149.44,56
+++2019-08-23 14:26:47.274807,ABC,buy,145.05,2
+++2019-08-24 08:09:27.140593,ABC,buy,143.92,15
+++2019-08-25 01:03:58.839078,ABC,buy,146.41,265
+++2019-08-26 06:55:42.875330,ABC,buy,146.94,157
+++2019-08-27 04:18:34.735112,ABC,sell,152.11,79
+++2019-08-28 12:50:43.211209,ABC,sell,151.52,134
+++2019-08-29 03:08:16.625251,DEF,sell,151.66,178
+++2019-08-29 22:49:26.848892,DEF,buy,145.01,1
+++2019-08-30 20:00:35.567127,DEF,sell,150.11,42
+++2019-08-31 17:36:16.521351,ABC,sell,149.79,200
+++2019-09-01 15:28:46.215146,ABC,buy,147.44,90
+++2019-09-02 07:50:13.771205,ABC,buy,148.65,82
+++2019-09-03 04:15:57.504749,ABC,sell,152.36,62
+++2019-09-04 01:13:11.034031,DEF,sell,151.48,38
+++2019-09-05 08:28:40.843427,ABC,sell,152.11,53
+++2019-09-06 00:09:21.303824,DEF,buy,146.12,10
+++2019-09-06 23:34:14.396449,DEF,sell,152.49,158
+++2019-09-08 11:06:15.389266,DEF,sell,153.2,93
+++2019-09-09 19:35:26.920010,ABC,buy,146.42,150
+++2019-09-10 10:26:04.827613,DEF,sell,149.95,35
+++2019-09-11 05:49:42.182254,DEF,sell,152.72,53
+++2019-09-11 21:29:59.187137,ABC,sell,148.18,61
+++2019-09-12 18:45:19.841229,DEF,buy,147.69,242
+++2019-09-14 01:18:03.859110,DEF,buy,147.03,226
+++2019-09-14 14:12:32.511221,DEF,buy,147.62,27
+++2019-09-15 06:11:50.599202,DEF,buy,147.35,70
+++2019-09-16 09:01:46.566870,ABC,sell,150.48,194
+++2019-09-17 00:06:34.268150,DEF,buy,146.84,53
+++2019-09-17 12:57:50.400888,ABC,buy,146.17,15
+++2019-09-19 00:29:35.629326,ABC,sell,152.62,184
+++2019-09-20 02:27:57.557369,ABC,sell,152.56,147
+++2019-09-20 18:33:03.042245,DEF,sell,149.43,60
+++2019-09-21 21:44:57.247947,ABC,sell,151.97,40
+++2019-09-22 14:00:23.051818,DEF,sell,152.79,77
+++2019-09-23 13:59:26.771946,DEF,sell,153.4,8
+++2019-09-24 16:51:55.188192,ABC,sell,150.58,45
+++2019-09-25 12:33:54.085644,DEF,buy,148.2,239
+++2019-09-26 03:23:45.395720,ABC,sell,152.46,21
+++2019-09-27 15:02:34.250253,ABC,sell,152.58,108
+++2019-09-28 07:50:39.400793,DEF,buy,149.07,38
+++2019-09-28 20:18:12.114080,ABC,buy,147.28,97
+++2019-09-30 08:14:21.735486,DEF,sell,150.98,130
+++2019-10-01 10:04:58.584849,ABC,buy,146.8,60
+++2019-10-02 17:33:28.946601,ABC,buy,146.9,17
+++2019-10-03 08:22:49.109896,DEF,buy,147.41,43
+++2019-10-04 02:19:03.981575,ABC,sell,151.19,38
+++2019-10-04 22:28:01.053118,DEF,sell,150.37,27
+++2019-10-05 18:04:33.591615,ABC,sell,151.2,153
+++2019-10-06 19:26:23.168662,DEF,buy,144.63,52
+++2019-10-07 18:06:53.558940,ABC,sell,149.99,58
+++2019-10-09 01:36:46.495874,DEF,sell,150.28,52
+++2019-10-09 21:43:48.406167,DEF,buy,144.38,225
+++2019-10-10 12:24:27.843886,DEF,sell,152.63,73
+++2019-10-11 06:13:53.952253,ABC,buy,147.53,149
+++2019-10-12 04:27:03.315268,DEF,buy,147.13,76
+++2019-10-12 23:03:31.330192,DEF,sell,153.01,175
+++2019-10-13 18:17:22.521683,ABC,sell,154.66,5
+++2019-10-14 18:29:25.392694,ABC,buy,146.32,47
+++2019-10-15 12:44:40.913731,ABC,sell,151.91,221
+++2019-10-16 20:17:38.013756,DEF,sell,151.87,31
+++2019-10-18 08:09:57.258085,DEF,buy,145.58,36
+++2019-10-19 14:32:12.693153,ABC,sell,152.27,64
+++2019-10-20 23:16:06.838369,ABC,sell,152.83,23
+++2019-10-22 09:28:36.578717,ABC,sell,153.01,109
+++2019-10-23 17:55:58.959351,DEF,sell,151.27,26
+++2019-10-24 18:57:31.329529,DEF,sell,155.01,92
+++2019-10-26 01:29:00.741244,DEF,sell,151.98,160
+++2019-10-27 01:35:34.555412,ABC,sell,151.83,6
+++2019-10-28 00:01:44.010975,DEF,buy,148.92,9
+++2019-10-28 16:53:02.066552,DEF,sell,151.51,67
+++2019-10-29 17:42:42.028127,ABC,buy,146.83,92
+++2019-10-30 17:48:59.222056,ABC,buy,146.65,3
+++2019-10-31 08:35:32.868524,ABC,buy,146.0,67
+++2019-11-01 14:30:42.443700,DEF,buy,146.69,45
+++2019-11-02 23:29:13.822874,ABC,buy,147.45,25
+++2019-11-04 05:36:02.993955,DEF,sell,149.18,171
+++2019-11-05 05:09:40.253337,DEF,buy,146.4,74
+++2019-11-06 14:48:18.819584,DEF,buy,147.18,65
+++2019-11-07 17:47:12.983357,DEF,buy,145.57,105
+++2019-11-08 14:04:39.065372,DEF,sell,149.5,62
+++2019-11-09 15:29:32.189657,DEF,sell,149.09,27
+++2019-11-10 05:41:56.219594,DEF,buy,148.69,101
+++2019-11-11 09:49:11.996183,DEF,sell,150.92,97
+++2019-11-12 01:05:10.275872,ABC,sell,151.02,7
+++2019-11-13 10:50:38.029670,ABC,sell,149.2,16
+++2019-11-14 09:45:41.737007,ABC,sell,150.35,44
+++2019-11-15 00:06:08.241208,DEF,sell,149.84,198
+++2019-11-15 20:43:09.222486,DEF,sell,150.67,127
+++2019-11-17 06:31:55.039853,ABC,buy,148.02,21
+++2019-11-18 06:55:54.768701,ABC,buy,147.34,84
+++2019-11-19 09:22:32.240298,ABC,sell,150.76,112
+++2019-11-20 01:02:22.919502,ABC,sell,149.92,189
+++2019-11-20 15:41:26.888820,DEF,buy,145.66,143
+++2019-11-21 19:36:10.749684,ABC,sell,151.8,86
+++2019-11-22 08:11:26.109300,ABC,sell,151.89,0
+++2019-11-23 19:49:34.205741,DEF,buy,147.74,141
+++2019-11-24 21:17:18.866234,ABC,sell,148.5,66
+++2019-11-26 09:10:21.660282,DEF,buy,143.38,4
+++2019-11-27 16:39:37.034404,DEF,buy,144.72,169
+++2019-11-28 17:02:21.368631,ABC,sell,145.92,90
+++2019-11-29 17:09:49.667946,ABC,buy,141.5,61
+++2019-11-30 09:18:01.408249,ABC,buy,141.18,135
+++2019-11-30 23:42:47.021902,ABC,buy,142.9,40
+++2019-12-01 19:52:04.607887,ABC,buy,141.6,50
+++2019-12-02 14:30:05.809809,DEF,buy,139.37,88
+++2019-12-03 21:45:31.828134,DEF,sell,143.72,158
+++2019-12-04 21:02:44.850173,DEF,buy,142.44,58
+++2019-12-06 01:08:30.406967,ABC,sell,139.93,47
+++2019-12-07 07:39:33.733221,ABC,sell,140.02,7
+++2019-12-08 09:03:56.908377,DEF,sell,140.98,147
+++2019-12-09 02:49:38.382594,ABC,buy,140.6,45
+++2019-12-09 21:22:18.043324,DEF,sell,141.53,23
+++2019-12-10 16:11:16.761970,ABC,sell,142.65,42
+++2019-12-11 23:47:12.577798,DEF,sell,141.57,33
+++2019-12-12 17:50:52.701763,DEF,buy,137.37,188
+++2019-12-13 14:56:19.751690,DEF,buy,136.38,72
+++2019-12-14 22:30:36.236938,DEF,sell,141.56,15
+++2019-12-16 09:04:31.226950,ABC,sell,139.66,233
+++2019-12-16 21:23:20.385642,DEF,buy,135.69,60
+++2019-12-18 08:28:34.654300,ABC,buy,138.65,8
+++2019-12-19 10:09:39.714313,DEF,sell,142.37,133
+++2019-12-20 01:23:49.253222,ABC,buy,137.55,134
+++2019-12-20 19:20:50.625308,ABC,sell,142.56,135
+++2019-12-21 19:58:33.851193,ABC,sell,143.6,43
+++2019-12-22 17:45:42.102989,ABC,sell,144.84,41
+++2019-12-23 12:27:25.503619,ABC,sell,141.97,107
+++2019-12-24 03:39:06.646835,DEF,sell,141.73,2
+++2019-12-24 21:51:37.386945,ABC,sell,144.61,226
+++2019-12-25 18:16:34.089004,DEF,sell,145.54,162
+++2019-12-26 09:54:49.794693,DEF,sell,142.0,0
+++2019-12-27 20:51:41.328747,ABC,sell,144.06,64
+++2019-12-29 03:30:49.915927,DEF,buy,139.88,104
+++2019-12-30 15:12:14.623705,DEF,sell,144.89,137
+++2019-12-31 05:24:16.245877,ABC,buy,141.11,9
+++2020-01-01 08:04:29.021195,DEF,sell,144.41,66
+++2020-01-02 12:46:11.450500,DEF,sell,144.11,7
+++2020-01-03 13:05:21.728279,ABC,buy,138.62,56
+++2020-01-04 04:27:47.210948,ABC,sell,141.5,217
+++2020-01-04 23:58:06.560175,DEF,buy,137.89,173
+++2020-01-06 02:36:12.518124,DEF,buy,139.72,85
+++2020-01-07 08:05:32.726370,ABC,sell,143.69,205
+++2020-01-08 08:51:51.939638,DEF,sell,142.12,62
+++2020-01-09 10:17:04.098355,DEF,sell,142.11,142
+++2020-01-10 07:15:56.001890,ABC,buy,139.37,56
+++2020-01-11 10:11:14.093955,ABC,sell,142.04,92
+++2020-01-12 02:22:55.497325,ABC,buy,137.69,198
+++2020-01-13 09:39:46.501455,ABC,buy,137.96,39
+++2020-01-14 15:45:35.616131,DEF,buy,137.56,27
+++2020-01-15 12:13:10.003038,ABC,buy,137.03,101
+++2020-01-16 01:59:56.947895,DEF,sell,139.66,45
+++2020-01-16 19:43:15.169704,ABC,buy,137.81,4
+++2020-01-17 13:21:04.838348,ABC,sell,138.95,203
+++2020-01-18 18:01:55.239443,DEF,sell,137.65,91
+++2020-01-19 20:07:04.625411,ABC,sell,136.72,82
+++2020-01-20 20:48:41.528047,ABC,buy,132.32,119
+++2020-01-22 08:42:14.591094,DEF,sell,134.64,3
+++2020-01-23 00:10:32.545444,DEF,sell,135.33,158
+++2020-01-24 06:58:02.471912,DEF,sell,134.39,152
+++2020-01-25 10:18:24.161512,ABC,buy,132.81,64
+++2020-01-26 01:03:22.263458,DEF,buy,134.43,150
+++2020-01-26 19:54:20.806665,DEF,sell,139.07,6
+++2020-01-27 13:45:21.370554,ABC,sell,137.56,154
+++2020-01-28 09:11:15.014497,DEF,buy,133.2,159
+++2020-01-29 02:13:54.438680,ABC,sell,136.56,152
+++2020-01-29 16:17:59.039199,DEF,sell,138.9,59
+++2020-01-30 06:55:11.158342,DEF,buy,135.32,288
+++2020-01-31 09:58:41.350958,DEF,sell,135.4,56
+++2020-02-01 00:16:21.526178,ABC,buy,130.82,41
+++2020-02-02 10:47:47.420986,DEF,sell,132.31,28
+++2020-02-03 15:44:39.119071,ABC,buy,131.9,159
+++2020-02-05 02:42:10.805304,DEF,sell,134.0,216
+++2020-02-06 14:21:58.289290,ABC,buy,130.13,144
+++2020-02-07 12:49:34.448742,DEF,buy,131.0,83
+++2020-02-08 09:41:01.922889,ABC,buy,132.11,91
+++2020-02-09 10:13:39.403488,DEF,sell,135.4,148
+++2020-02-10 15:00:31.236576,DEF,sell,134.81,57
+++2020-02-12 02:34:31.050450,ABC,buy,130.39,82
+++2020-02-12 23:31:02.390711,ABC,sell,134.91,13
+++2020-02-14 09:30:31.089353,DEF,sell,133.7,43
+++2020-02-15 15:14:35.824625,ABC,sell,132.54,39
+++2020-02-16 11:04:35.961514,DEF,buy,128.82,120
+++2020-02-17 00:52:38.644194,ABC,buy,127.27,57
+++2020-02-18 11:50:41.867743,ABC,buy,128.58,248
+++2020-02-19 22:25:06.079293,ABC,sell,132.73,108
+++2020-02-21 06:55:17.916969,DEF,buy,131.0,3
+++2020-02-22 17:49:26.163364,DEF,sell,132.55,10
+++2020-02-24 01:56:34.331627,ABC,buy,127.89,50
+++2020-02-24 17:26:58.439144,DEF,buy,125.08,54
+++2020-02-25 19:34:59.675583,ABC,sell,129.16,241
+++2020-02-26 09:35:59.962100,ABC,buy,126.36,22
+++2020-02-27 01:52:29.043564,ABC,sell,128.21,137
+++2020-02-28 12:08:41.913198,ABC,sell,130.45,6
+++2020-02-29 01:29:41.072469,ABC,sell,130.0,57
+++2020-02-29 15:37:48.012903,ABC,sell,130.25,63
+++2020-03-01 21:09:00.300707,ABC,sell,131.25,99
+++2020-03-03 04:12:03.468618,DEF,sell,130.97,198
+++2020-03-04 00:42:28.369708,DEF,sell,130.22,61
+++2020-03-05 03:10:39.370586,ABC,buy,127.43,121
+++2020-03-06 04:03:36.779682,DEF,buy,126.03,205
+++2020-03-07 03:31:41.510136,ABC,buy,126.15,5
+++2020-03-08 12:58:41.185930,ABC,buy,126.6,64
+++2020-03-09 08:26:06.981541,DEF,buy,127.52,101
+++2020-03-09 21:00:34.331684,DEF,buy,128.83,1
+++2020-03-11 04:30:04.854084,ABC,buy,131.41,66
+++2020-03-12 15:20:51.780073,DEF,sell,135.0,37
+++2020-03-14 00:40:58.009144,ABC,sell,133.67,113
+++2020-03-14 23:33:04.119272,DEF,buy,130.62,50
+++2020-03-16 07:34:10.008498,ABC,buy,129.77,194
+++2020-03-17 07:11:32.059053,DEF,buy,131.08,61
+++2020-03-17 20:09:22.608194,ABC,buy,133.61,126
+++2020-03-18 23:36:19.021289,ABC,buy,135.82,140
+++2020-03-20 00:29:11.037802,DEF,buy,137.42,3
+++2020-03-21 09:21:21.516028,DEF,buy,134.91,67
+++2020-03-22 05:29:39.016806,ABC,sell,137.39,25
+++2020-03-23 02:40:51.381952,DEF,sell,137.26,3
+++2020-03-24 10:29:27.218283,ABC,sell,136.13,42
+++2020-03-25 17:15:21.024745,DEF,sell,136.41,14
+++2020-03-26 13:27:26.159282,DEF,buy,132.63,25
+++2020-03-27 05:37:03.044155,DEF,sell,135.67,81
+++2020-03-28 00:11:34.621312,ABC,sell,138.61,14
+++2020-03-28 22:58:01.566486,DEF,sell,137.3,9
+++2020-03-29 11:31:21.108673,DEF,buy,134.44,142
+++2020-03-30 15:28:34.890661,DEF,buy,133.31,81
+++2020-03-31 10:31:27.569305,DEF,sell,135.07,119
+++2020-04-01 12:59:01.241598,DEF,buy,134.94,30
+++2020-04-02 04:57:58.635332,DEF,sell,135.45,77
+++2020-04-03 03:15:28.379371,DEF,buy,131.04,108
+++2020-04-04 05:08:35.647714,DEF,sell,135.62,75
+++2020-04-05 09:15:37.375667,ABC,buy,132.68,53
+++2020-04-06 18:19:02.399983,ABC,buy,131.66,29
+++2020-04-08 04:20:34.768440,ABC,sell,138.63,202
+++2020-04-08 19:38:15.511325,ABC,sell,135.23,101
+++2020-04-10 00:24:24.801399,ABC,sell,136.04,139
+++2020-04-11 10:23:32.618744,ABC,buy,132.3,74
+++2020-04-12 05:19:07.041174,ABC,sell,135.81,20
+++2020-04-13 04:54:00.768030,DEF,buy,132.83,71
+++2020-04-14 09:22:22.459286,DEF,buy,134.33,225
+++2020-04-15 03:05:33.726289,DEF,buy,134.04,172
+++2020-04-16 12:56:06.764705,ABC,sell,136.39,156
+++2020-04-17 18:39:24.973103,DEF,buy,133.85,170
+++2020-04-18 12:45:40.498632,ABC,buy,134.12,70
+++2020-04-19 07:36:49.380143,DEF,buy,133.01,7
+++2020-04-20 17:56:20.486915,ABC,buy,130.28,0
+++2020-04-22 02:44:51.145294,DEF,sell,134.33,26
+++2020-04-23 13:56:16.670102,ABC,buy,131.92,41
+++2020-04-24 11:12:57.815497,DEF,buy,132.86,26
+++2020-04-25 20:35:09.542041,DEF,buy,132.93,85
+++2020-04-27 02:43:01.117950,DEF,sell,135.34,25
+++2020-04-27 23:16:43.445135,ABC,buy,132.48,47
+++2020-04-29 04:23:39.644623,ABC,buy,134.39,40
+++2020-04-30 16:15:03.635462,ABC,buy,132.65,77
+++2020-05-01 22:09:10.825776,DEF,buy,131.43,9
+++2020-05-03 02:23:29.164802,DEF,sell,134.46,28
+++2020-05-04 09:53:36.153276,DEF,sell,132.5,71
+++2020-05-04 22:50:11.825373,ABC,sell,131.2,72
+++2020-05-05 11:33:12.130632,DEF,sell,130.99,132
+++2020-05-06 06:35:58.523532,ABC,buy,129.01,66
+++2020-05-06 23:48:11.020231,ABC,sell,130.25,115
+++2020-05-07 15:51:48.138843,DEF,sell,131.56,72
+++2020-05-09 00:05:05.054775,ABC,sell,131.47,46
+++2020-05-10 05:46:12.550763,DEF,sell,130.2,112
+++2020-05-11 05:58:56.886138,DEF,buy,126.55,10
+++2020-05-12 06:26:15.881957,DEF,buy,124.34,3
+++2020-05-13 12:22:02.086260,DEF,buy,123.15,71
+++2020-05-14 09:24:22.490910,DEF,sell,126.25,5
+++2020-05-15 01:27:23.687095,DEF,sell,126.83,36
+++2020-05-16 00:35:52.237621,ABC,sell,125.84,70
+++2020-05-16 21:09:31.958083,ABC,sell,123.92,29
+++2020-05-18 02:02:12.578094,DEF,sell,124.8,126
+++2020-05-19 11:03:28.420471,ABC,sell,123.27,138
+++2020-05-20 04:29:58.027985,DEF,buy,121.65,30
+++2020-05-21 00:51:46.480736,DEF,buy,123.76,101
+++2020-05-21 13:23:46.499756,DEF,buy,123.3,70
+++2020-05-22 22:31:10.926553,ABC,sell,128.84,109
+++2020-05-23 10:37:29.632318,ABC,buy,125.38,175
+++2020-05-24 01:14:47.139924,DEF,sell,127.35,51
+++2020-05-24 18:13:36.395073,ABC,sell,129.52,37
+++2020-05-26 03:27:18.013193,DEF,sell,126.84,67
+++2020-05-27 10:44:33.327606,ABC,buy,125.76,29
+++2020-05-28 11:44:38.296613,DEF,sell,131.0,64
+++2020-05-29 01:20:59.840169,ABC,buy,127.59,82
+++2020-05-30 10:33:20.418294,DEF,sell,131.86,138
+++2020-05-31 07:32:30.776366,ABC,sell,129.44,14
+++2020-06-01 17:06:11.636984,DEF,buy,126.96,24
+++2020-06-03 02:06:48.052171,ABC,sell,129.28,58
+++2020-06-03 14:33:59.200641,DEF,sell,128.14,142
+++2020-06-04 03:12:28.830566,ABC,buy,126.12,279
+++2020-06-04 18:13:36.423394,DEF,buy,126.9,40
+++2020-06-05 22:55:50.922403,DEF,sell,127.52,66
+++2020-06-07 02:07:11.492616,DEF,sell,127.73,14
+++2020-06-07 22:21:24.979990,DEF,sell,126.62,39
+++2020-06-09 00:33:24.992573,ABC,buy,124.07,48
+++2020-06-10 11:16:06.163047,DEF,buy,124.66,7
+++2020-06-11 01:51:11.849586,DEF,buy,124.08,21
+++2020-06-12 03:14:05.139082,ABC,buy,125.07,198
+++2020-06-12 18:29:06.953386,DEF,sell,126.51,1
+++2020-06-13 23:33:06.542991,DEF,buy,124.62,2
+++2020-06-14 21:56:04.049079,DEF,sell,126.03,51
+++2020-06-16 03:55:18.999235,ABC,sell,125.05,80
+++2020-06-17 07:05:15.793769,DEF,sell,125.15,101
+++2020-06-18 04:30:08.270672,ABC,buy,123.98,2
+++2020-06-19 02:50:19.699892,ABC,buy,123.45,7
+++2020-06-19 17:27:42.020439,DEF,buy,121.89,67
+++2020-06-20 06:12:30.674699,ABC,buy,123.61,39
+++2020-06-21 12:41:46.877725,DEF,sell,125.05,139
+++2020-06-22 06:05:22.146894,DEF,buy,122.95,161
+++2020-06-23 07:29:59.824055,ABC,buy,122.57,55
+++2020-06-24 04:10:29.051035,ABC,sell,126.85,103
+++2020-06-25 00:23:36.772399,ABC,sell,126.65,96
+++2020-06-26 04:33:23.037957,ABC,buy,127.27,65
+++2020-06-27 16:24:34.817022,DEF,sell,128.28,100
+++2020-06-29 01:52:42.741314,ABC,sell,131.6,80
+++2020-06-30 08:54:47.904138,DEF,sell,132.56,166
+++2020-07-01 08:20:41.364188,ABC,buy,127.9,23
+++2020-07-02 12:58:33.619933,ABC,sell,129.54,21
+++2020-07-03 16:41:53.810106,DEF,buy,125.83,0
+++2020-07-05 02:06:43.986193,ABC,sell,128.99,28
+++2020-07-06 02:48:59.022591,DEF,buy,125.54,22
+++2020-07-06 21:32:00.564465,ABC,buy,126.61,118
+++2020-07-08 09:13:24.631751,DEF,sell,130.18,49
+++2020-07-09 05:23:25.038269,ABC,buy,126.04,194
+++2020-07-10 02:24:56.503888,ABC,buy,125.67,12
+++2020-07-10 20:36:23.709153,DEF,buy,127.69,159
+++2020-07-11 20:12:14.254790,DEF,sell,130.65,24
+++2020-07-13 04:45:02.672653,ABC,buy,127.45,120
+++2020-07-13 20:05:32.147020,ABC,sell,129.89,110
+++2020-07-15 03:10:32.576700,ABC,buy,127.27,12
+++2020-07-16 05:44:27.063993,DEF,sell,131.17,36
+++2020-07-17 03:13:28.860035,ABC,buy,127.6,56
+++2020-07-18 02:33:49.082958,ABC,sell,130.82,141
+++2020-07-19 06:28:27.861161,DEF,buy,125.66,83
+++2020-07-20 10:02:04.113666,ABC,sell,129.81,53
+++2020-07-21 12:41:25.863254,ABC,buy,126.49,48
+++2020-07-22 23:17:59.393307,ABC,sell,128.61,12
+++2020-07-23 15:49:44.113466,DEF,sell,132.07,58
+++2020-07-24 13:38:27.625819,DEF,buy,125.93,129
+++2020-07-25 07:52:50.997227,DEF,buy,125.07,185
+++2020-07-26 01:14:41.167628,ABC,sell,127.63,113
+++2020-07-27 01:00:20.624661,DEF,buy,123.58,67
+++2020-07-27 22:13:55.013416,DEF,buy,123.44,51
+++2020-07-28 14:16:31.792301,DEF,sell,127.37,48
+++2020-07-29 12:10:39.164814,DEF,sell,128.65,119
+++2020-07-30 18:25:17.273546,ABC,sell,127.11,75
+++2020-07-31 15:44:46.892615,DEF,buy,122.88,71
+++2020-08-01 20:15:15.559460,DEF,sell,126.9,74
+++2020-08-02 19:36:41.709307,ABC,buy,122.38,210
+++2020-08-03 19:34:15.056973,ABC,sell,125.46,45
+++2020-08-05 01:10:27.738687,ABC,sell,125.87,42
+++2020-08-05 18:36:55.491272,DEF,buy,121.63,87
+++2020-08-06 11:05:49.524126,ABC,sell,126.0,114
+++2020-08-07 06:43:10.416193,DEF,sell,128.01,18
+++2020-08-07 20:29:57.975905,ABC,sell,127.55,91
+++2020-08-09 06:37:43.924074,DEF,buy,125.14,80
+++2020-08-10 15:57:06.481301,DEF,buy,121.25,85
+++2020-08-12 02:28:12.195248,ABC,buy,122.04,35
+++2020-08-12 18:31:39.207810,ABC,buy,120.79,8
+++2020-08-13 12:26:34.576155,DEF,sell,125.96,37
+++2020-08-14 14:05:34.690714,ABC,buy,123.65,45
+++2020-08-15 19:01:26.716254,ABC,buy,123.29,114
+++2020-08-16 23:57:23.702950,DEF,sell,127.87,45
+++2020-08-17 13:07:00.473569,ABC,buy,125.77,73
+++2020-08-18 07:01:12.856649,DEF,buy,124.35,114
+++2020-08-19 15:17:46.809991,DEF,sell,126.95,13
+++2020-08-20 08:05:08.358697,DEF,buy,123.72,105
+++2020-08-21 17:09:50.753097,DEF,buy,126.69,114
+++2020-08-22 23:59:19.752681,ABC,buy,125.85,21
+++2020-08-24 01:02:54.494601,ABC,buy,125.54,68
+++2020-08-25 01:29:19.361943,ABC,sell,127.26,95
+++2020-08-26 04:34:42.395297,DEF,sell,125.63,25
+++2020-08-27 11:17:48.552328,DEF,sell,123.67,147
+++2020-08-28 08:03:24.198157,ABC,sell,123.26,12
+++2020-08-29 19:33:13.721604,ABC,sell,125.61,207
+++2020-08-30 19:44:40.149046,DEF,buy,122.33,131
+++2020-09-01 00:52:47.248633,ABC,sell,126.24,102
+++2020-09-01 23:45:53.978412,ABC,sell,127.83,14
+++2020-09-03 06:32:42.113118,ABC,sell,122.86,59
+++2020-09-04 17:18:50.034668,ABC,sell,123.61,57
+++2020-09-05 09:26:01.779347,DEF,buy,121.25,121
+++2020-09-06 06:36:17.683962,ABC,buy,122.47,24
+++2020-09-07 01:04:43.571093,DEF,sell,124.12,22
+++2020-09-07 15:03:45.601642,ABC,buy,121.74,32
+++2020-09-08 14:00:38.733405,ABC,buy,121.4,40
+++2020-09-09 08:43:40.880251,DEF,buy,123.33,15
+++2020-09-10 00:48:17.343375,DEF,sell,128.63,162
+++2020-09-10 17:04:21.894764,DEF,sell,129.08,2
+++2020-09-11 17:28:50.024087,DEF,buy,127.28,21
+++2020-09-12 08:14:22.363868,ABC,sell,130.66,69
+++2020-09-13 11:46:09.408750,ABC,sell,131.7,3
+++2020-09-14 16:34:49.835274,ABC,sell,131.79,159
+++2020-09-16 03:53:08.101351,DEF,buy,125.95,3
+++2020-09-16 16:07:07.667319,DEF,buy,124.15,100
+++2020-09-17 09:20:25.207493,DEF,buy,126.45,207
+++2020-09-18 11:19:26.897546,ABC,buy,128.48,217
+++2020-09-19 12:02:58.805873,ABC,buy,126.05,83
+++2020-09-20 08:46:33.356347,ABC,buy,126.11,10
+++2020-09-21 17:01:16.487348,DEF,sell,128.16,110
+++2020-09-22 15:26:41.222271,DEF,sell,129.23,102
+++2020-09-23 21:54:37.284992,ABC,sell,130.04,28
+++2020-09-24 19:33:54.361278,DEF,sell,130.72,83
+++2020-09-25 18:22:55.061476,ABC,buy,128.09,92
+++2020-09-27 03:16:52.927025,ABC,buy,127.75,114
+++2020-09-27 15:39:47.327081,DEF,sell,130.01,50
+++2020-09-28 08:23:45.140760,ABC,sell,130.16,86
+++2020-09-28 21:44:42.442398,DEF,buy,127.44,143
+++2020-09-30 03:28:54.875096,DEF,buy,128.27,18
+++2020-10-01 07:36:25.313724,ABC,buy,126.66,52
+++2020-10-02 00:49:32.959149,DEF,sell,126.69,135
+++2020-10-03 02:03:04.056650,DEF,buy,126.6,63
+++2020-10-04 05:44:36.441120,ABC,buy,124.46,216
+++2020-10-04 20:06:50.970842,DEF,buy,124.3,79
+++2020-10-05 10:32:56.551653,DEF,buy,123.18,133
+++2020-10-06 15:37:00.045598,DEF,buy,122.32,134
+++2020-10-07 21:11:05.684729,ABC,sell,127.45,177
+++2020-10-08 23:18:08.759006,DEF,sell,126.94,54
+++2020-10-10 09:43:32.213339,DEF,buy,125.41,152
+++2020-10-11 13:09:57.231102,ABC,sell,128.37,72
+++2020-10-12 16:17:28.052139,ABC,buy,125.43,93
+++2020-10-13 16:42:31.254255,ABC,buy,124.18,28
+++2020-10-14 20:34:33.256678,DEF,sell,126.55,41
+++2020-10-15 16:40:12.322651,DEF,sell,126.7,21
+++2020-10-16 12:19:43.942588,ABC,buy,124.88,13
+++2020-10-17 23:12:50.912586,DEF,buy,124.74,16
+++2020-10-18 17:12:32.751737,ABC,buy,126.74,81
+++2020-10-19 15:10:29.248084,ABC,buy,125.2,58
+++2020-10-20 09:48:28.540525,ABC,sell,127.44,95
+++2020-10-21 01:46:52.493647,DEF,sell,127.87,22
+++2020-10-21 23:07:46.581980,DEF,sell,129.44,3
+++2020-10-22 14:57:38.265245,ABC,sell,128.68,46
+++2020-10-23 12:54:09.915104,DEF,buy,126.42,3
+++2020-10-24 03:43:46.959181,DEF,buy,126.15,15
+++2020-10-25 02:01:21.911811,ABC,buy,124.37,107
+++2020-10-25 16:42:04.207971,ABC,buy,125.48,104
+++2020-10-26 18:04:24.843063,ABC,sell,129.53,129
+++2020-10-27 22:25:26.858150,ABC,sell,128.76,152
+++2020-10-29 03:22:50.378063,ABC,buy,122.9,36
+++2020-10-29 17:37:52.454426,ABC,buy,120.76,24
+++2020-10-30 10:51:28.766204,ABC,sell,124.12,200
+++2020-10-31 01:43:15.195557,ABC,buy,121.55,89
+++2020-11-01 12:49:28.429366,ABC,sell,123.22,96
+++2020-11-02 16:24:50.866723,DEF,buy,119.17,29
+++2020-11-03 21:11:05.126328,ABC,sell,122.59,152
+++2020-11-04 19:49:55.852007,DEF,sell,122.71,55
+++2020-11-05 23:10:28.276817,ABC,sell,119.58,28
+++2020-11-06 14:25:41.278962,DEF,buy,118.25,10
+++2020-11-07 14:59:27.841074,DEF,sell,122.24,43
+++2020-11-08 21:11:09.626852,DEF,sell,120.15,58
+++2020-11-10 05:31:06.659580,ABC,buy,118.2,146
+++2020-11-10 22:10:06.302198,DEF,buy,118.97,202
+++2020-11-11 21:01:30.541409,DEF,sell,120.19,34
+++2020-11-12 19:09:01.405088,DEF,buy,118.92,23
+++2020-11-13 11:54:26.443620,DEF,sell,124.34,83
+++2020-11-14 00:01:20.778598,ABC,sell,123.83,19
+++2020-11-14 14:33:30.935971,ABC,sell,123.88,88
+++2020-11-15 16:59:31.381572,ABC,buy,117.78,59
+++2020-11-16 11:33:05.037229,ABC,buy,119.16,56
+++2020-11-17 00:11:13.274292,DEF,buy,119.92,107
+++2020-11-18 07:41:41.259854,ABC,buy,118.9,33
+++2020-11-19 19:35:33.903451,ABC,buy,119.98,33
+++2020-11-20 16:55:36.151619,ABC,buy,117.94,33
+++2020-11-21 23:48:26.585315,ABC,sell,121.33,61
+++2020-11-23 02:41:19.685302,DEF,buy,120.1,7
+++2020-11-23 23:24:53.684065,ABC,buy,120.25,55
+++2020-11-24 18:42:13.948405,DEF,sell,123.91,213
+++2020-11-25 15:23:55.487930,DEF,buy,121.74,109
+++2020-11-26 20:36:21.667343,DEF,buy,119.2,46
+++2020-11-28 05:38:25.363005,ABC,buy,116.48,167
+++2020-11-29 14:26:25.029210,ABC,sell,121.65,75
+++2020-12-01 01:44:18.529028,ABC,sell,122.92,25
+++2020-12-02 02:47:46.469036,DEF,buy,118.94,123
+++2020-12-02 15:26:17.060808,ABC,buy,118.03,147
+++2020-12-03 14:52:01.629276,DEF,sell,121.91,37
+++2020-12-04 08:08:01.271633,DEF,sell,123.11,73
+++2020-12-05 16:30:27.725633,DEF,buy,118.09,41
+++2020-12-06 11:32:22.140443,ABC,sell,123.05,79
+++2020-12-07 01:13:30.796687,ABC,sell,126.22,112
+++2020-12-08 11:07:32.564828,DEF,buy,120.03,109
+++2020-12-09 03:59:44.285463,ABC,buy,117.59,188
+++2020-12-09 21:27:26.647342,ABC,sell,122.52,73
+++2020-12-11 06:55:06.649551,ABC,buy,121.11,27
+++2020-12-11 22:27:54.300770,DEF,buy,119.41,63
+++2020-12-13 09:59:59.141633,ABC,buy,122.25,131
+++2020-12-14 00:34:14.748964,DEF,buy,123.23,102
+++2020-12-14 20:13:26.952904,DEF,sell,127.58,149
+++2020-12-15 22:34:07.058778,DEF,buy,123.43,129
+++2020-12-17 01:14:40.897168,DEF,buy,125.64,92
+++2020-12-17 14:28:32.276938,ABC,sell,125.15,309
+++2020-12-18 07:30:59.061966,DEF,sell,127.13,29
+++2020-12-19 13:05:55.780565,ABC,buy,120.76,48
+++2020-12-20 14:36:43.585436,ABC,buy,120.58,100
+++2020-12-21 03:33:21.919410,ABC,buy,120.83,29
+++2020-12-22 11:49:26.761682,DEF,buy,119.26,44
+++2020-12-23 09:00:45.378770,ABC,sell,124.14,22
+++2020-12-24 03:03:14.104504,DEF,buy,118.8,16
+++2020-12-24 15:23:26.548499,DEF,sell,127.65,51
+++2020-12-25 11:33:19.260163,ABC,sell,125.06,114
+++2020-12-26 19:36:54.776772,ABC,buy,121.71,23
+++2020-12-27 20:56:24.035359,ABC,buy,118.53,34
+++2020-12-28 18:05:15.813060,DEF,buy,119.8,18
+++2020-12-29 10:21:43.634993,ABC,buy,118.92,173
+++2020-12-29 23:38:52.139688,ABC,buy,118.39,85
+++2020-12-31 05:02:16.288474,DEF,buy,116.78,166
+++2021-01-01 15:17:33.686096,DEF,sell,118.91,168
+++2021-01-03 02:22:52.821719,ABC,sell,118.35,70
+++2021-01-04 00:48:18.360331,DEF,buy,113.83,0
+++2021-01-04 17:54:08.620296,DEF,buy,114.1,200
+++2021-01-05 12:46:15.092123,DEF,buy,113.91,16
+++2021-01-06 02:11:05.578544,ABC,buy,115.23,69
+++2021-01-07 13:09:45.566190,DEF,sell,118.01,88
+++2021-01-08 06:21:10.003102,ABC,buy,112.51,109
+++2021-01-08 23:31:54.673983,DEF,sell,116.39,10
+++2021-01-10 04:44:38.021154,DEF,sell,114.4,62
+++2021-01-11 15:51:29.192791,ABC,sell,113.51,129
+++2021-01-13 01:43:07.240912,DEF,buy,107.88,35
+++2021-01-14 08:18:15.355938,ABC,buy,108.94,13
+++2021-01-15 13:20:42.715500,DEF,sell,114.24,250
+++2021-01-16 17:25:22.252359,DEF,buy,109.96,88
+++2021-01-17 16:39:18.720092,ABC,sell,114.8,14
+++2021-01-18 05:56:10.165344,ABC,sell,115.84,7
+++2021-01-19 01:01:00.463279,ABC,buy,112.64,153
+++2021-01-19 14:56:48.596338,ABC,sell,115.54,31
+++2021-01-20 23:52:09.918983,ABC,buy,112.95,53
+++2021-01-21 12:00:32.603328,DEF,buy,113.27,109
+++2021-01-22 23:22:27.288500,DEF,buy,111.0,119
+++2021-01-24 04:12:45.505914,DEF,buy,109.82,29
+++2021-01-25 13:59:48.774501,DEF,buy,108.82,35
+++2021-01-26 17:06:32.296159,ABC,sell,113.49,41
+++2021-01-27 20:02:06.444530,ABC,buy,107.78,20
+++2021-01-28 17:48:41.180312,DEF,buy,107.1,8
+++2021-01-29 22:40:20.596819,DEF,sell,109.88,69
+++2021-01-31 04:35:14.320930,DEF,buy,107.27,48
+++2021-02-01 07:34:15.329402,ABC,sell,109.39,215
+++2021-02-02 17:56:29.719959,DEF,sell,107.29,127
+++2021-02-03 19:54:25.069360,ABC,buy,104.43,89
+++2021-02-04 14:52:45.225247,DEF,buy,106.45,7
+++2021-02-05 18:21:17.103384,DEF,buy,103.85,14
+++2021-02-06 07:51:38.025965,ABC,buy,102.89,181
+++2021-02-07 18:41:17.358823,ABC,buy,104.04,75
+++2021-02-08 19:25:06.228589,DEF,buy,104.29,49
+++2021-02-10 05:41:10.017342,ABC,sell,109.53,147
+++2021-02-11 07:36:12.511603,ABC,buy,105.48,74
+++2021-02-12 18:50:51.674623,DEF,sell,110.58,113
+++2021-02-14 05:27:05.587898,DEF,sell,106.38,26
+++2021-02-15 06:51:02.102883,DEF,buy,104.42,70
+++2021-02-16 00:36:18.096018,ABC,buy,101.66,63
+++2021-02-16 14:45:18.566394,DEF,sell,107.77,15
+++2021-02-17 02:49:50.327176,ABC,buy,103.38,25
+++2021-02-17 21:50:51.738951,DEF,sell,104.32,202
+++2021-02-18 13:13:44.524198,DEF,buy,101.18,35
+++2021-02-19 21:24:14.954714,ABC,buy,100.68,58
+++2021-02-21 01:46:40.357696,DEF,buy,102.14,98
+++2021-02-21 19:44:00.236779,DEF,sell,105.75,119
+++2021-02-22 09:53:34.936695,DEF,sell,104.84,40
+++2021-02-23 07:36:41.546628,DEF,sell,107.11,125
+++2021-02-23 23:41:33.616709,DEF,sell,103.21,68
+++2021-02-24 23:38:52.603776,DEF,sell,103.56,56
+++2021-02-25 15:20:48.498561,ABC,buy,102.18,135
+++2021-02-26 15:03:55.703114,ABC,sell,109.36,100
+++2021-02-27 07:23:29.941885,ABC,buy,104.05,159
+++2021-02-28 12:27:15.318184,ABC,buy,103.02,151
+++2021-03-01 14:25:07.540528,DEF,buy,103.06,114
+++2021-03-02 07:57:26.220017,DEF,buy,102.64,130
+++2021-03-03 15:46:28.070335,DEF,buy,102.02,11
+++2021-03-05 03:10:34.239690,DEF,buy,104.01,69
+++2021-03-05 17:17:05.980588,ABC,sell,106.76,126
+++2021-03-07 02:31:34.746168,DEF,buy,104.84,129
+++2021-03-07 20:34:46.966059,DEF,buy,106.69,25
+++2021-03-08 22:46:23.756738,ABC,buy,106.75,91
+++2021-03-09 19:03:34.309904,ABC,buy,107.73,18
+++2021-03-10 10:30:49.545860,DEF,buy,106.38,90
+++2021-03-11 08:07:51.938629,DEF,buy,108.46,8
+++2021-03-12 19:48:38.799806,ABC,sell,112.87,24
+++2021-03-13 17:10:52.261999,ABC,buy,109.44,121
+++2021-03-15 02:05:00.431031,ABC,buy,110.34,18
+++2021-03-15 15:10:20.976124,DEF,sell,113.44,40
+++2021-03-16 09:20:30.880122,ABC,sell,114.38,208
+++2021-03-17 03:01:59.531501,DEF,sell,114.4,27
+++2021-03-17 16:14:52.771750,DEF,buy,110.26,97
+++2021-03-18 13:50:22.474474,DEF,buy,105.35,86
+++2021-03-19 11:31:27.985223,ABC,sell,108.96,108
+++2021-03-20 06:47:59.735685,DEF,buy,108.12,41
+++2021-03-21 16:05:32.953119,ABC,sell,113.1,41
+++2021-03-22 16:05:51.120872,ABC,buy,108.92,13
+++2021-03-23 16:44:01.959779,DEF,sell,114.75,55
+++2021-03-24 22:47:53.453842,DEF,buy,111.19,93
+++2021-03-26 01:18:01.997170,DEF,sell,115.52,238
+++2021-03-27 06:18:13.207451,ABC,buy,113.76,46
+++2021-03-28 15:00:12.824001,ABC,sell,115.39,3
+++2021-03-29 10:08:38.026485,ABC,buy,114.09,117
+++2021-03-30 21:02:34.087408,DEF,sell,116.42,23
+++2021-04-01 01:58:54.457532,ABC,buy,113.76,199
+++2021-04-02 02:14:37.150150,DEF,sell,118.64,113
+++2021-04-02 23:01:49.947526,ABC,buy,114.51,43
+++2021-04-03 16:26:29.455556,DEF,buy,115.4,10
+++2021-04-04 15:35:26.424528,ABC,sell,119.59,102
+++2021-04-05 16:51:46.699822,ABC,sell,115.87,190
+++2021-04-06 09:24:24.095421,ABC,sell,116.85,70
+++2021-04-07 00:20:18.915432,ABC,sell,118.7,106
+++2021-04-07 13:38:40.296385,DEF,buy,116.2,78
+++2021-04-08 07:53:12.242649,DEF,buy,117.5,96
+++2021-04-08 22:23:29.192739,ABC,buy,116.42,83
+++2021-04-10 00:07:24.341756,DEF,sell,117.0,82
+++2021-04-10 20:28:49.437393,DEF,sell,118.44,175
+++2021-04-11 09:23:44.781436,DEF,sell,117.55,78
+++2021-04-12 12:53:41.167397,ABC,sell,116.31,13
+++2021-04-13 12:05:59.676897,DEF,buy,113.76,21
+++2021-04-14 05:10:53.945865,ABC,buy,114.3,75
+++2021-04-15 15:13:28.700392,ABC,sell,116.07,20
+++2021-04-16 08:47:15.196973,ABC,buy,115.36,42
+++2021-04-17 11:27:00.058610,ABC,sell,119.34,8
+++2021-04-18 08:34:29.626946,DEF,buy,115.89,72
+++2021-04-19 16:14:23.907597,ABC,buy,115.56,31
+++2021-04-20 22:09:58.292767,ABC,buy,115.66,9
+++2021-04-21 20:27:08.653027,ABC,sell,118.99,24
+++2021-04-23 01:22:07.257668,ABC,buy,115.71,43
+++2021-04-24 08:45:21.210176,ABC,sell,120.56,58
+++2021-04-25 11:02:37.794321,ABC,buy,116.22,37
+++2021-04-26 08:30:48.846698,ABC,sell,120.8,34
+++2021-04-27 10:10:48.258888,ABC,sell,119.12,63
+++2021-04-28 13:52:47.924229,DEF,buy,116.83,51
+++2021-04-29 17:00:15.901014,ABC,sell,119.06,18
+++2021-05-01 00:19:26.922539,ABC,buy,115.83,36
+++2021-05-02 08:38:40.777967,DEF,sell,119.46,34
+++2021-05-03 18:29:48.129340,DEF,buy,118.37,103
+++2021-05-05 03:24:20.363101,DEF,buy,116.57,150
+++2021-05-06 14:34:58.840875,ABC,buy,116.91,243
+++2021-05-07 08:22:41.316448,ABC,buy,115.47,15
+++2021-05-08 06:59:43.124206,ABC,buy,117.1,64
+++2021-05-09 08:28:38.040660,DEF,buy,118.18,117
+++2021-05-10 16:42:04.305276,DEF,sell,121.52,112
+++2021-05-11 21:32:41.364344,ABC,buy,117.38,38
+++2021-05-13 01:01:38.332890,DEF,buy,116.71,3
+++2021-05-13 13:55:44.819401,ABC,sell,118.31,117
+++2021-05-14 09:29:56.638733,DEF,sell,118.7,37
+++2021-05-15 00:34:12.052547,ABC,sell,117.57,153
+++2021-05-15 17:57:39.995869,DEF,sell,118.42,59
+++2021-05-16 13:29:17.093242,ABC,buy,112.97,148
+++2021-05-17 07:33:10.410936,ABC,sell,115.7,75
+++2021-05-18 07:22:37.527686,DEF,buy,113.53,57
+++2021-05-19 00:38:18.937402,DEF,sell,116.02,209
+++2021-05-19 15:04:53.077144,DEF,sell,118.36,132
+++2021-05-20 08:52:01.026407,DEF,sell,117.83,83
+++2021-05-21 02:14:39.834657,DEF,sell,116.9,162
+++2021-05-21 18:43:37.691569,DEF,sell,115.9,39
+++2021-05-22 22:14:13.713722,DEF,buy,113.81,46
+++2021-05-23 18:07:46.454445,DEF,buy,111.77,96
+++2021-05-24 19:04:27.206707,DEF,sell,115.3,68
+++2021-05-25 15:04:26.744248,DEF,sell,114.39,4
+++2021-05-26 04:06:59.937896,ABC,buy,112.01,3
+++2021-05-27 13:50:59.521234,ABC,buy,112.33,95
+++2021-05-28 05:38:55.585054,DEF,sell,114.74,303
+++2021-05-29 00:39:09.031210,ABC,sell,112.87,16
+++2021-05-30 12:30:58.748033,ABC,sell,112.95,74
+++2021-05-31 14:10:45.160668,DEF,buy,111.7,29
+++2021-06-01 07:35:58.329524,DEF,sell,113.98,173
+++2021-06-02 02:19:03.517992,ABC,buy,113.66,48
+++2021-06-02 15:46:49.635860,DEF,buy,114.0,133
+++2021-06-03 09:55:01.099800,ABC,buy,113.51,37
+++2021-06-03 22:44:38.681861,ABC,buy,113.23,97
+++2021-06-05 08:04:53.206870,ABC,buy,113.43,59
+++2021-06-06 04:33:18.818918,DEF,buy,112.87,51
+++2021-06-07 01:43:20.576320,ABC,sell,115.97,11
+++2021-06-08 02:54:57.007463,ABC,buy,113.87,7
+++2021-06-09 07:32:23.568059,DEF,buy,114.52,81
+++2021-06-10 18:04:38.215573,ABC,sell,116.53,43
+++2021-06-12 02:36:43.296628,DEF,buy,113.66,183
+++2021-06-13 05:19:24.199658,DEF,buy,112.77,3
+++2021-06-14 12:32:07.904860,DEF,sell,116.09,53
+++2021-06-15 20:46:13.375458,ABC,sell,115.3,9
+++2021-06-16 22:03:57.935610,ABC,buy,112.73,17
+++2021-06-18 07:30:27.650440,ABC,sell,115.63,3
+++2021-06-19 07:19:04.884789,ABC,sell,115.33,89
+++2021-06-20 08:53:32.551015,DEF,sell,113.29,87
+++2021-06-21 09:39:42.410464,ABC,sell,113.99,99
+++2021-06-22 06:05:21.199590,ABC,buy,113.04,38
+++2021-06-23 16:09:43.335051,DEF,sell,114.18,8
+++2021-06-25 03:45:20.939413,ABC,buy,110.96,152
+++2021-06-26 03:37:22.175790,DEF,buy,110.62,74
+++2021-06-27 01:43:23.891805,DEF,buy,110.11,121
+++2021-06-27 14:18:11.695961,ABC,buy,108.33,68
+++2021-06-28 16:42:31.469368,ABC,sell,110.3,67
+++2021-06-30 04:34:25.897292,ABC,buy,107.63,22
+++2021-07-01 03:31:58.338631,DEF,buy,106.74,16
+++2021-07-02 11:09:04.634832,DEF,buy,107.35,90
+++2021-07-03 19:11:51.493674,ABC,buy,106.03,112
+++2021-07-05 02:45:20.576031,ABC,buy,105.97,52
+++2021-07-06 09:11:50.193342,ABC,buy,104.16,167
+++2021-07-07 16:19:42.870636,DEF,buy,103.36,103
+++2021-07-08 06:57:08.983589,DEF,sell,105.32,108
+++2021-07-09 05:30:43.141380,DEF,sell,107.47,48
+++2021-07-10 17:13:34.171900,ABC,buy,103.19,240
+++2021-07-11 07:39:38.589498,DEF,sell,106.71,6
+++2021-07-11 20:18:39.643145,DEF,buy,104.28,58
+++2021-07-12 08:56:15.008979,ABC,sell,106.57,143
+++2021-07-13 01:53:39.350438,ABC,sell,107.65,124
+++2021-07-13 17:32:19.036973,DEF,buy,103.08,140
+++2021-07-14 14:01:08.136126,ABC,sell,106.91,167
+++2021-07-15 18:35:58.661642,DEF,buy,102.61,184
+++2021-07-16 20:09:11.492705,DEF,sell,106.61,69
+++2021-07-17 18:37:30.973652,ABC,sell,105.22,29
+++2021-07-18 07:38:17.933011,DEF,buy,103.13,16
+++2021-07-18 23:11:28.043532,ABC,sell,106.21,9
+++2021-07-20 10:16:13.087554,DEF,buy,103.64,64
+++2021-07-21 10:22:02.000096,ABC,sell,105.16,96
+++2021-07-22 06:22:31.942938,DEF,sell,103.41,139
+++2021-07-23 05:35:10.791578,DEF,buy,103.07,25
+++2021-07-24 14:29:48.537046,DEF,buy,101.08,16
+++2021-07-25 12:39:24.705962,DEF,sell,103.42,127
+++2021-07-26 02:38:44.737872,ABC,buy,101.16,68
+++2021-07-27 00:24:06.187586,ABC,sell,104.48,74
+++2021-07-28 06:57:57.924589,ABC,sell,104.79,143
+++2021-07-29 14:29:36.859700,ABC,buy,102.14,35
+++2021-07-30 05:15:39.184013,DEF,sell,105.2,183
+++2021-07-30 19:57:54.200416,DEF,buy,104.01,64
+++2021-08-01 01:58:24.849062,DEF,sell,107.71,19
+++2021-08-02 10:26:48.862316,DEF,sell,108.02,125
+++2021-08-03 11:51:28.623708,ABC,sell,109.31,55
+++2021-08-04 23:44:40.838242,DEF,buy,105.94,77
+++2021-08-05 16:18:33.742475,DEF,buy,103.47,45
+++2021-08-07 03:28:41.148923,DEF,buy,105.45,199
+++2021-08-08 14:09:34.020093,ABC,buy,106.07,20
+++2021-08-09 08:03:53.785233,ABC,buy,105.01,54
+++2021-08-09 21:39:03.967777,DEF,buy,107.66,40
+++2021-08-10 22:13:57.384612,ABC,buy,106.62,124
+++2021-08-12 08:27:45.885898,DEF,sell,108.54,7
+++2021-08-13 19:50:23.061267,ABC,buy,105.09,44
+++2021-08-14 18:11:39.379822,DEF,sell,108.07,219
+++2021-08-16 02:53:47.101961,ABC,buy,107.32,97
+++2021-08-17 10:23:42.767114,DEF,sell,108.71,34
+++2021-08-18 11:08:25.725296,ABC,sell,109.87,13
+++2021-08-19 14:48:15.240401,ABC,buy,107.92,173
+++2021-08-20 17:49:26.852486,DEF,sell,110.13,26
+++2021-08-22 02:52:27.091048,ABC,sell,107.97,84
+++2021-08-22 23:56:51.500671,DEF,buy,106.43,13
+++2021-08-23 22:57:08.105251,ABC,sell,111.93,33
+++2021-08-25 01:53:37.636808,ABC,sell,110.59,3
+++2021-08-25 21:48:16.527683,DEF,buy,106.42,146
+++2021-08-26 15:35:48.429742,ABC,sell,109.72,159
+++2021-08-27 20:42:50.218109,ABC,buy,107.58,23
+++2021-08-29 00:25:27.825048,ABC,buy,107.09,44
+++2021-08-29 18:25:47.395654,DEF,sell,108.69,117
+++2021-08-30 10:04:58.115928,DEF,sell,107.54,107
+++2021-08-31 02:40:50.852583,DEF,sell,106.73,160
+++2021-09-01 14:25:38.054446,ABC,sell,106.18,60
+++2021-09-02 23:16:45.401421,ABC,buy,104.68,86
+++2021-09-04 07:47:37.483218,ABC,buy,103.96,83
+++2021-09-05 13:34:17.398346,DEF,buy,103.49,112
+++2021-09-06 20:15:40.282598,DEF,sell,106.85,161
+++2021-09-08 06:23:51.408672,ABC,sell,106.42,88
+++2021-09-09 09:15:51.495414,DEF,buy,104.02,159
+++2021-09-10 03:36:49.431925,DEF,buy,103.46,17
+++2021-09-10 16:06:22.207698,DEF,sell,105.43,142
+++2021-09-11 07:25:08.554890,DEF,sell,105.81,162
+++2021-09-11 20:57:33.441248,DEF,sell,103.65,106
+++2021-09-12 13:21:18.010662,ABC,sell,105.87,248
+++2021-09-13 15:26:51.705808,DEF,sell,105.53,25
+++2021-09-14 19:53:56.010628,ABC,sell,107.14,21
+++2021-09-15 10:04:42.882415,DEF,sell,107.25,97
+++2021-09-16 21:59:00.975110,DEF,sell,106.34,12
+++2021-09-17 17:24:56.343867,DEF,sell,102.23,5
+++2021-09-18 14:13:51.498183,ABC,buy,100.23,81
+++2021-09-19 18:16:08.027612,ABC,buy,98.99,11
+++2021-09-21 00:02:32.213246,ABC,buy,96.71,133
+++2021-09-21 15:48:07.379085,DEF,sell,99.34,58
+++2021-09-22 12:49:03.128060,ABC,buy,97.57,98
+++2021-09-23 11:28:56.225251,ABC,sell,102.78,72
+++2021-09-23 23:42:43.971690,DEF,buy,98.74,44
+++2021-09-24 23:26:06.385014,DEF,sell,103.0,98
+++2021-09-26 10:38:11.391197,DEF,buy,97.81,72
+++2021-09-27 12:53:17.050186,DEF,sell,99.65,152
+++2021-09-29 00:35:09.876663,ABC,buy,97.75,12
+++2021-09-29 14:58:31.193592,DEF,buy,100.01,49
+++2021-09-30 13:05:25.780080,DEF,buy,99.69,231
+++2021-10-01 06:28:02.942223,DEF,sell,105.3,0
+++2021-10-02 03:28:56.833663,ABC,sell,104.19,38
+++2021-10-03 15:00:59.099366,DEF,buy,98.89,26
+++2021-10-05 01:51:27.879903,ABC,buy,97.83,283
+++2021-10-06 12:31:30.521238,ABC,sell,101.48,42
+++2021-10-07 08:12:20.835199,DEF,sell,102.2,72
+++2021-10-07 20:30:27.876186,DEF,buy,96.84,108
+++2021-10-09 08:10:17.690730,ABC,sell,99.03,140
+++2021-10-10 09:48:52.434433,DEF,buy,98.06,55
+++2021-10-10 23:43:10.429295,ABC,sell,98.86,26
+++2021-10-11 20:21:55.381454,ABC,sell,99.86,240
+++2021-10-12 10:05:59.962662,ABC,sell,98.98,210
+++2021-10-13 17:28:46.776456,DEF,sell,99.73,16
+++2021-10-15 01:23:52.177182,ABC,sell,101.25,234
+++2021-10-16 06:39:37.107960,ABC,buy,97.0,28
+++2021-10-17 11:23:35.155663,DEF,buy,96.27,11
+++2021-10-18 09:57:32.666061,ABC,buy,93.37,33
+++2021-10-19 18:58:17.484915,ABC,sell,98.77,27
+++2021-10-20 10:00:13.723181,ABC,buy,94.5,70
+++2021-10-21 13:01:28.618877,ABC,buy,94.98,131
+++2021-10-22 08:49:29.574053,ABC,buy,93.04,42
+++2021-10-22 23:30:17.017646,ABC,buy,91.57,127
+++2021-10-24 05:41:54.573467,DEF,sell,99.72,48
+++2021-10-25 11:46:31.741770,ABC,buy,94.55,31
+++2021-10-26 22:25:50.721877,ABC,buy,97.2,69
+++2021-10-27 15:05:13.302875,DEF,buy,97.11,118
+++2021-10-29 00:27:38.355335,ABC,sell,101.33,47
+++2021-10-30 02:51:19.004739,ABC,sell,101.08,10
+++2021-10-31 09:09:05.634653,DEF,sell,99.58,147
+++2021-11-01 14:27:52.583833,ABC,sell,99.24,118
+++2021-11-02 14:04:01.758229,ABC,sell,97.82,37
+++2021-11-03 16:06:19.606885,DEF,buy,95.02,39
+++2021-11-04 23:58:40.342446,DEF,buy,96.91,102
+++2021-11-06 06:53:29.615033,DEF,sell,100.59,82
+++2021-11-07 02:35:09.748782,ABC,buy,99.1,17
+++2021-11-08 06:01:17.937900,DEF,buy,98.52,3
+++2021-11-08 22:04:38.763480,ABC,buy,97.76,71
+++2021-11-09 18:49:54.059397,ABC,sell,102.26,199
+++2021-11-10 13:40:04.211131,DEF,sell,100.65,70
+++2021-11-11 10:23:20.457844,DEF,buy,95.88,6
+++2021-11-12 13:17:25.676417,ABC,buy,96.93,14
+++2021-11-13 06:38:41.965457,ABC,sell,100.1,42
+++2021-11-14 07:33:16.368019,DEF,sell,100.12,95
+++2021-11-15 19:18:09.395249,DEF,buy,96.36,42
+++2021-11-17 06:28:30.181977,DEF,buy,95.65,44
+++2021-11-18 01:58:42.471583,DEF,sell,102.06,72
+++2021-11-19 04:32:57.730091,DEF,sell,100.53,47
+++2021-11-20 05:19:56.199613,ABC,sell,100.72,59
+++2021-11-20 17:47:33.288079,DEF,buy,96.59,41
+++2021-11-21 08:38:36.087012,DEF,buy,98.63,46
+++2021-11-22 20:13:33.155206,DEF,buy,98.22,31
+++2021-11-23 16:13:58.713459,ABC,sell,102.74,113
+++2021-11-24 08:57:53.367035,DEF,buy,97.51,138
+++2021-11-25 05:24:23.311026,DEF,buy,98.4,50
+++2021-11-25 20:06:23.654795,ABC,buy,98.6,53
+++2021-11-27 06:12:50.622176,ABC,sell,100.22,72
+++2021-11-28 10:20:53.105258,ABC,sell,99.97,140
+++2021-11-29 01:12:54.815495,ABC,buy,93.89,93
+++2021-11-30 05:26:34.533563,ABC,sell,100.65,90
+++2021-11-30 19:30:18.066595,DEF,buy,97.29,15
+++2021-12-01 09:55:38.815509,ABC,sell,99.63,127
+++2021-12-02 17:33:07.011963,ABC,sell,100.27,55
+++2021-12-04 02:50:45.885280,DEF,sell,98.98,97
+++2021-12-05 03:40:52.883618,ABC,sell,99.76,0
+++2021-12-06 14:36:27.727019,DEF,buy,95.4,18
+++2021-12-07 05:01:54.833609,DEF,buy,98.16,36
+++2021-12-07 21:59:54.512756,DEF,sell,100.17,35
+++2021-12-09 00:20:35.384426,DEF,sell,100.38,43
+++2021-12-09 19:23:19.768047,DEF,buy,98.72,18
+++2021-12-10 20:29:58.167480,ABC,sell,103.2,167
+++2021-12-11 10:49:20.345497,DEF,buy,98.74,55
+++2021-12-12 02:49:13.813667,ABC,buy,96.17,112
+++2021-12-12 23:12:07.706251,DEF,sell,100.87,17
+++2021-12-14 10:15:12.003605,DEF,sell,101.31,40
+++2021-12-15 09:03:09.240936,ABC,buy,100.13,74
+++2021-12-16 00:58:52.513328,DEF,buy,98.64,284
+++2021-12-17 08:21:48.453517,ABC,sell,100.86,41
+++2021-12-17 22:26:55.476961,DEF,sell,96.47,49
+++2021-12-19 06:34:54.719728,DEF,buy,92.6,111
+++2021-12-20 17:51:44.956000,ABC,buy,94.57,183
+++2021-12-21 07:35:31.636446,ABC,sell,100.63,46
+++2021-12-21 20:27:03.026182,DEF,sell,99.12,204
+++2021-12-22 18:06:27.342100,DEF,buy,97.91,104
+++2021-12-23 22:59:30.688170,ABC,buy,95.57,10
+++2021-12-24 18:50:26.020494,DEF,sell,101.53,49
+++2021-12-26 02:44:19.657280,ABC,buy,97.41,65
+++2021-12-26 19:33:48.577709,ABC,buy,98.21,59
+++2021-12-27 11:46:02.768814,DEF,sell,101.18,171
+++2021-12-28 04:08:33.083126,DEF,buy,96.59,71
+++2021-12-29 12:08:24.492797,ABC,sell,99.37,42
+++2021-12-30 16:22:16.383845,ABC,buy,95.54,43
+++2022-01-01 01:28:53.052112,ABC,sell,100.79,100
+++2022-01-01 14:45:51.788196,DEF,buy,97.15,95
+++2022-01-02 17:50:29.506070,DEF,buy,98.74,91
+++2022-01-03 13:43:44.905191,ABC,sell,100.3,61
+++2022-01-04 10:16:38.923458,DEF,buy,97.41,66
+++2022-01-05 05:49:38.548328,ABC,buy,100.99,18
+++2022-01-06 14:36:42.642473,DEF,buy,101.51,37
+++2022-01-07 23:52:35.923166,DEF,buy,101.99,15
+++2022-01-09 03:08:29.019706,DEF,buy,98.93,22
+++2022-01-09 21:17:59.296318,ABC,sell,100.28,111
+++2022-01-11 05:31:44.936676,DEF,sell,100.34,117
+++2022-01-12 06:45:30.175160,DEF,buy,97.92,184
+++2022-01-12 23:45:05.215447,ABC,sell,98.4,99
+++2022-01-14 02:13:13.163448,ABC,buy,92.96,204
+++2022-01-15 07:56:58.040436,DEF,buy,92.48,123
+++2022-01-16 13:58:37.250442,ABC,sell,97.71,85
+++2022-01-17 13:26:48.134677,DEF,sell,97.02,44
+++2022-01-18 05:17:40.621054,DEF,buy,94.32,59
+++2022-01-19 00:53:35.757501,DEF,sell,97.28,218
+++2022-01-20 06:05:14.320867,DEF,sell,97.75,90
+++2022-01-21 04:12:09.236467,DEF,buy,95.28,17
+++2022-01-22 13:47:37.002012,ABC,buy,95.13,30
+++2022-01-23 12:20:02.393029,DEF,sell,96.7,110
+++2022-01-24 03:51:27.534793,ABC,sell,98.35,156
+++2022-01-25 12:18:32.227446,ABC,buy,92.56,105
+++2022-01-26 19:45:03.189447,DEF,buy,93.01,92
+++2022-01-28 00:07:45.835739,ABC,buy,92.6,156
+++2022-01-29 07:51:24.798900,ABC,sell,95.79,13
+++2022-01-29 22:20:51.463504,ABC,sell,95.79,137
+++2022-01-31 06:10:44.465994,ABC,buy,90.88,75
+++2022-02-01 06:43:18.217524,DEF,buy,89.96,19
+++2022-02-02 09:51:15.542391,ABC,sell,93.6,206
+++2022-02-03 01:10:15.554314,DEF,buy,87.96,114
+++2022-02-04 02:19:47.212610,ABC,sell,92.8,56
+++2022-02-04 16:19:19.704263,DEF,sell,95.9,38
+++2022-02-05 07:14:49.268496,ABC,buy,88.57,2
+++2022-02-06 14:49:05.379726,DEF,buy,90.87,31
+++2022-02-07 13:46:05.602461,ABC,sell,94.97,3
+++2022-02-08 09:39:31.477397,DEF,sell,94.04,182
+++2022-02-09 13:52:28.822550,DEF,buy,90.74,74
+++2022-02-10 10:39:15.411899,ABC,sell,94.35,63
+++2022-02-11 13:40:03.007057,ABC,sell,93.08,75
+++2022-02-12 15:31:10.053626,ABC,sell,91.92,23
+++2022-02-13 10:12:59.403984,DEF,buy,89.63,112
+++2022-02-14 03:47:53.346405,ABC,sell,93.02,29
+++2022-02-14 22:59:36.473362,DEF,buy,90.8,258
+++2022-02-15 14:51:52.071365,DEF,buy,88.53,104
+++2022-02-16 10:32:18.545339,DEF,buy,89.29,186
+++2022-02-17 02:09:12.297055,ABC,sell,92.11,23
+++2022-02-18 11:49:05.454122,DEF,sell,93.05,81
+++2022-02-19 23:15:45.272882,ABC,buy,86.94,31
+++2022-02-21 09:59:15.424681,ABC,buy,88.46,73
+++2022-02-22 02:18:54.778476,DEF,buy,87.96,153
+++2022-02-22 23:53:19.268124,DEF,buy,85.7,1
+++2022-02-23 18:10:57.612844,ABC,sell,92.36,169
+++2022-02-24 08:13:32.840532,DEF,sell,89.7,193
+++2022-02-25 08:34:06.380170,DEF,buy,87.31,198
+++2022-02-26 10:31:09.108871,ABC,buy,84.28,10
+++2022-02-27 05:32:23.496844,ABC,sell,90.18,147
+++2022-02-27 22:46:56.966817,DEF,sell,90.21,0
+++2022-03-01 01:13:29.101587,DEF,buy,88.7,64
+++2022-03-02 05:49:37.560423,DEF,sell,92.98,40
+++2022-03-03 03:25:21.280634,DEF,sell,95.2,4
+++2022-03-04 07:32:06.847195,DEF,buy,89.89,110
+++2022-03-05 03:47:49.906098,ABC,buy,88.83,39
+++2022-03-06 12:17:26.829857,ABC,sell,91.59,6
+++2022-03-07 09:15:29.960024,ABC,sell,89.31,77
+++2022-03-08 03:27:57.315633,ABC,sell,89.92,19
+++2022-03-08 17:20:52.467785,ABC,buy,86.86,6
+++2022-03-09 15:48:31.687068,DEF,buy,85.27,0
+++2022-03-10 21:08:05.461587,DEF,sell,88.84,33
+++2022-03-11 14:23:00.770641,ABC,buy,84.33,28
+++2022-03-12 15:10:47.757495,DEF,buy,84.47,86
+++2022-03-13 07:59:50.208138,ABC,buy,83.04,77
+++2022-03-13 20:52:51.014704,DEF,sell,88.09,210
+++2022-03-14 14:04:19.859871,DEF,buy,85.97,43
+++2022-03-15 10:13:34.029529,DEF,sell,89.27,57
+++2022-03-16 18:17:14.328720,DEF,sell,89.27,125
+++2022-03-17 10:41:50.404172,ABC,buy,83.83,149
+++2022-03-18 05:16:22.241188,ABC,sell,86.41,31
+++2022-03-18 23:50:45.299430,ABC,buy,85.28,23
+++2022-03-19 22:28:11.764771,DEF,buy,83.58,48
+++2022-03-21 07:53:51.816392,ABC,buy,83.64,32
+++2022-03-22 15:46:22.255417,DEF,sell,82.96,34
+++2022-03-23 15:10:55.685775,DEF,buy,80.61,28
+++2022-03-24 16:44:45.459723,DEF,sell,85.59,30
+++2022-03-26 04:20:08.524891,ABC,sell,83.98,24
+++2022-03-26 22:55:10.239734,DEF,buy,80.45,124
+++2022-03-27 22:24:39.495479,ABC,sell,87.13,202
+++2022-03-29 01:41:40.107125,ABC,buy,83.2,30
+++2022-03-29 14:44:58.906689,DEF,sell,85.07,22
+++2022-03-30 21:49:49.551721,ABC,buy,82.94,137
+++2022-04-01 07:45:30.523769,ABC,buy,81.3,136
+++2022-04-02 01:04:28.670457,ABC,sell,82.8,33
+++2022-04-03 08:09:48.649674,DEF,sell,82.47,54
+++2022-04-03 20:32:21.975103,ABC,sell,83.27,18
+++2022-04-04 21:15:23.468100,ABC,sell,82.79,184
+++2022-04-06 05:18:02.804887,ABC,sell,83.81,73
+++2022-04-07 08:31:59.367888,ABC,sell,84.52,208
+++2022-04-08 14:56:11.742696,ABC,buy,81.57,11
+++2022-04-09 22:32:10.616551,ABC,buy,82.05,56
+++2022-04-11 05:17:54.916839,DEF,sell,85.54,109
+++2022-04-12 01:24:25.780874,ABC,sell,85.55,34
+++2022-04-12 21:24:01.118436,ABC,buy,82.53,87
+++2022-04-13 19:28:42.317977,DEF,sell,84.11,94
+++2022-04-14 16:55:49.392818,ABC,sell,84.2,47
+++2022-04-15 13:44:11.529920,DEF,buy,79.04,67
+++2022-04-16 19:10:14.057487,DEF,sell,84.0,8
+++2022-04-17 15:27:15.392851,DEF,sell,81.62,17
+++2022-04-19 01:16:35.602174,DEF,sell,82.96,29
+++2022-04-20 04:29:10.944001,ABC,buy,83.54,13
+++2022-04-21 05:31:17.541857,DEF,sell,85.27,13
+++2022-04-21 18:08:47.698388,DEF,buy,83.73,138
+++2022-04-23 00:47:16.099798,DEF,buy,82.66,0
+++2022-04-24 05:44:58.013095,ABC,buy,83.87,61
+++2022-04-24 23:00:44.839174,DEF,buy,81.95,12
+++2022-04-25 17:04:11.351581,ABC,sell,84.76,3
+++2022-04-26 21:22:18.173278,DEF,sell,85.2,21
+++2022-04-28 04:06:33.912841,DEF,buy,83.1,89
+++2022-04-28 23:42:13.349660,ABC,sell,88.19,61
+++2022-04-29 14:35:36.664900,ABC,buy,84.92,24
+++2022-05-01 01:52:19.642565,DEF,buy,85.55,53
+++2022-05-01 23:28:12.396572,DEF,buy,85.22,152
+++2022-05-02 12:16:32.532799,DEF,buy,85.73,93
+++2022-05-03 22:54:23.302276,DEF,buy,83.54,20
+++2022-05-04 20:21:06.893836,ABC,sell,89.0,144
+++2022-05-05 15:00:54.435044,ABC,sell,87.67,206
+++2022-05-07 01:25:22.213574,ABC,buy,86.73,16
+++2022-05-08 00:09:32.032168,DEF,buy,85.77,96
+++2022-05-09 04:04:38.601648,ABC,sell,87.47,47
+++2022-05-10 08:03:02.420064,DEF,buy,85.43,12
+++2022-05-11 10:30:38.264775,DEF,buy,87.28,55
+++2022-05-12 00:48:31.352032,ABC,buy,87.0,81
+++2022-05-13 12:45:08.049020,DEF,buy,85.54,20
+++2022-05-14 17:53:19.441162,DEF,sell,88.96,48
+++2022-05-15 15:02:38.992546,DEF,sell,88.28,71
+++2022-05-16 18:43:37.061731,ABC,sell,88.7,29
+++2022-05-18 03:35:26.931122,DEF,sell,89.61,76
+++2022-05-18 22:02:33.816898,DEF,sell,90.1,24
+++2022-05-20 00:09:50.079828,DEF,buy,87.19,23
+++2022-05-20 13:19:25.025646,ABC,sell,91.78,95
+++2022-05-21 06:29:54.529236,ABC,buy,89.33,21
+++2022-05-21 20:12:29.586667,DEF,buy,90.05,27
+++2022-05-22 09:33:04.733420,ABC,buy,90.04,141
+++2022-05-23 10:39:42.878345,DEF,buy,90.71,5
+++2022-05-24 06:20:39.405703,DEF,buy,89.46,131
+++2022-05-24 18:45:35.754588,ABC,buy,85.72,77
+++2022-05-25 09:50:58.507229,DEF,buy,86.69,165
+++2022-05-26 20:21:44.696648,DEF,sell,89.17,14
+++2022-05-27 12:26:26.991092,ABC,sell,89.23,35
+++2022-05-28 09:25:21.310899,DEF,sell,88.47,55
+++2022-05-29 20:37:01.641721,ABC,sell,88.97,47
+++2022-05-31 08:03:53.876809,ABC,sell,89.51,3
+++2022-06-01 18:12:41.837927,ABC,sell,89.66,85
+++2022-06-02 20:39:10.407505,DEF,buy,87.52,20
+++2022-06-03 14:32:58.306897,DEF,sell,87.6,61
+++2022-06-04 14:32:44.452827,ABC,buy,86.73,37
+++2022-06-05 13:39:04.095559,DEF,buy,83.82,60
+++2022-06-06 04:54:36.850000,ABC,sell,85.56,34
+++2022-06-07 01:46:08.586149,DEF,buy,83.39,31
+++2022-06-07 17:29:06.056507,DEF,sell,85.74,2
+++2022-06-08 15:58:34.824402,ABC,buy,85.05,76
+++2022-06-09 19:54:58.674200,ABC,buy,86.12,30
+++2022-06-10 11:14:13.238188,DEF,sell,84.9,95
+++2022-06-11 13:23:07.530150,ABC,buy,82.97,74
+++2022-06-12 16:43:26.227288,DEF,buy,82.86,76
+++2022-06-13 04:49:06.981884,ABC,sell,86.85,69
+++2022-06-13 17:23:18.515283,ABC,buy,83.14,92
+++2022-06-14 10:16:15.841738,ABC,sell,85.46,208
+++2022-06-15 05:15:01.657042,ABC,sell,86.45,59
+++2022-06-15 18:45:05.821454,DEF,sell,86.54,76
+++2022-06-16 08:10:43.280696,ABC,sell,86.89,134
+++2022-06-17 13:13:48.028693,ABC,buy,84.62,26
+++2022-06-18 07:43:43.194213,DEF,sell,86.0,4
+++2022-06-19 06:54:56.425905,DEF,buy,83.06,80
+++2022-06-19 20:05:48.235932,DEF,buy,82.86,133
+++2022-06-21 05:49:20.379655,DEF,sell,87.18,52
+++2022-06-22 01:26:30.250469,ABC,buy,84.81,18
+++2022-06-23 09:48:53.504868,ABC,buy,86.53,40
+++2022-06-24 07:52:23.941482,ABC,buy,87.58,78
+++2022-06-24 22:41:43.951270,DEF,buy,88.53,224
+++2022-06-25 15:11:53.091296,DEF,buy,88.49,92
+++2022-06-26 12:24:02.441449,DEF,buy,88.19,159
+++2022-06-27 02:48:39.209232,DEF,buy,88.1,163
+++2022-06-28 14:00:39.595202,DEF,sell,90.77,21
+++2022-06-29 09:57:44.133319,ABC,buy,90.12,18
+++2022-06-29 22:45:39.736489,DEF,sell,92.88,30
+++2022-07-01 04:19:33.655017,DEF,sell,93.04,46
+++2022-07-02 11:50:12.692650,ABC,sell,95.32,87
+++2022-07-03 01:14:05.304047,ABC,sell,95.02,5
+++2022-07-04 02:53:52.690019,ABC,buy,92.63,54
+++2022-07-05 03:47:44.756732,DEF,buy,94.62,27
+++2022-07-06 00:37:39.118535,ABC,sell,96.18,17
+++2022-07-07 10:04:46.864125,ABC,sell,94.24,97
+++2022-07-08 08:29:44.479162,ABC,buy,92.57,22
+++2022-07-09 02:44:27.207852,DEF,sell,93.13,15
+++2022-07-09 15:36:25.912099,DEF,buy,90.26,193
+++2022-07-10 05:46:37.583435,DEF,sell,92.96,32
+++2022-07-11 07:57:20.343044,DEF,buy,89.6,76
+++2022-07-12 16:17:49.070415,DEF,sell,91.69,55
+++2022-07-13 12:15:23.735365,ABC,sell,91.81,90
+++2022-07-14 18:39:41.050009,DEF,buy,88.13,90
+++2022-07-16 05:50:26.323739,ABC,sell,92.02,43
+++2022-07-16 19:44:54.282024,DEF,buy,90.53,52
+++2022-07-18 02:59:34.590334,DEF,sell,91.26,121
+++2022-07-18 15:14:31.020855,ABC,buy,91.47,56
+++2022-07-19 22:16:39.123813,ABC,sell,93.54,28
+++2022-07-21 08:11:46.362859,DEF,sell,93.47,116
+++2022-07-22 15:51:16.799159,DEF,sell,95.09,84
+++2022-07-23 09:42:48.293842,ABC,sell,93.35,68
+++2022-07-24 05:33:57.129176,ABC,buy,92.22,5
+++2022-07-24 18:02:42.256927,ABC,buy,92.15,246
+++2022-07-25 19:45:44.521382,DEF,sell,91.88,75
+++2022-07-26 13:45:14.014594,ABC,buy,91.65,30
+++2022-07-27 16:18:14.293530,ABC,buy,88.99,87
+++2022-07-28 17:31:44.991355,ABC,buy,88.37,156
+++2022-07-30 01:10:10.307045,DEF,buy,87.38,97
+++2022-07-30 20:00:45.969459,DEF,sell,90.5,145
+++2022-07-31 18:18:44.337278,DEF,buy,89.0,35
+++2022-08-01 11:35:07.230511,DEF,sell,90.57,24
+++2022-08-02 11:40:21.885760,DEF,buy,88.6,94
+++2022-08-03 16:16:56.317543,ABC,sell,92.24,155
+++2022-08-04 17:12:38.935204,DEF,buy,89.36,111
+++2022-08-05 07:18:47.212049,DEF,sell,92.39,123
+++2022-08-06 15:00:49.031418,DEF,sell,90.52,12
+++2022-08-07 14:19:40.358856,DEF,buy,89.41,52
+++2022-08-09 00:17:30.972759,DEF,buy,90.38,169
+++2022-08-10 02:19:15.977636,ABC,sell,93.74,57
+++2022-08-11 08:09:32.760665,DEF,sell,94.78,20
+++2022-08-12 19:46:16.686189,DEF,sell,93.79,94
+++2022-08-14 02:11:26.232527,DEF,buy,91.43,142
+++2022-08-15 09:41:39.474256,DEF,sell,94.4,36
+++2022-08-16 18:38:54.431298,DEF,sell,92.26,62
+++2022-08-17 06:44:29.339475,DEF,sell,95.05,53
+++2022-08-18 07:41:36.334476,ABC,sell,93.99,36
+++2022-08-19 15:08:39.949334,DEF,buy,90.57,2
+++2022-08-20 12:09:55.932678,DEF,sell,95.28,79
+++2022-08-21 14:27:49.503744,ABC,buy,91.26,125
+++2022-08-22 05:53:21.763360,DEF,sell,95.46,110
+++2022-08-22 22:18:47.901325,DEF,buy,94.19,43
+++2022-08-23 10:47:21.333940,ABC,buy,93.61,30
+++2022-08-24 05:53:41.003340,DEF,sell,98.23,149
+++2022-08-25 09:25:18.198508,ABC,buy,93.42,162
+++2022-08-26 05:51:44.530843,ABC,sell,95.89,174
+++2022-08-27 13:10:24.137086,ABC,sell,98.88,57
+++2022-08-28 22:28:29.835805,ABC,buy,93.6,24
+++2022-08-29 14:02:53.477172,ABC,sell,97.88,23
+++2022-08-30 15:19:17.715065,DEF,sell,97.12,55
+++2022-08-31 13:37:38.667583,ABC,sell,95.0,57
+++2022-09-01 15:47:56.042134,DEF,sell,98.82,158
+++2022-09-02 06:05:10.428630,ABC,sell,100.52,26
+++2022-09-03 05:20:10.308427,ABC,sell,98.23,141
+++2022-09-04 09:53:44.796688,ABC,sell,97.95,17
+++2022-09-05 08:27:22.756182,ABC,sell,96.54,45
+++2022-09-06 07:16:43.139475,ABC,sell,98.42,49
+++2022-09-07 09:41:45.318758,ABC,sell,95.91,119
+++2022-09-08 10:41:48.151817,DEF,buy,92.52,71
+++2022-09-09 12:15:17.796700,ABC,buy,91.97,37
+++2022-09-10 11:12:03.033396,DEF,buy,89.89,202
+++2022-09-11 06:00:03.370753,ABC,sell,96.3,193
+++2022-09-11 23:24:32.335155,ABC,buy,92.18,76
+++2022-09-12 21:46:23.350508,DEF,buy,91.54,51
+++2022-09-13 20:16:31.152872,ABC,sell,95.81,59
+++2022-09-15 05:21:19.697350,DEF,sell,95.85,53
+++2022-09-16 14:25:32.758334,DEF,buy,91.99,126
+++2022-09-18 01:40:44.978270,ABC,sell,91.14,3
+++2022-09-19 11:46:28.031779,ABC,buy,90.3,152
+++2022-09-20 14:32:43.241172,ABC,buy,89.4,27
+++2022-09-21 10:59:23.132375,DEF,buy,87.01,55
+++2022-09-22 14:11:16.488708,ABC,buy,87.19,60
+++2022-09-23 11:08:31.357021,DEF,sell,89.53,28
+++2022-09-24 09:49:56.581297,ABC,sell,89.9,199
+++2022-09-25 10:23:11.067344,DEF,sell,90.2,177
+++2022-09-26 03:01:52.832987,ABC,buy,90.56,11
+++2022-09-27 11:00:49.339742,DEF,buy,90.76,57
+++2022-09-28 08:36:34.428632,DEF,buy,91.34,159
+++2022-09-29 00:02:27.683264,ABC,sell,96.75,21
+++2022-09-30 02:18:54.171789,DEF,sell,93.7,6
+++2022-10-01 00:05:47.310132,DEF,buy,90.94,121
+++2022-10-02 05:24:19.133753,DEF,buy,90.03,62
+++2022-10-03 00:06:30.938449,DEF,buy,88.84,4
+++2022-10-03 19:50:55.778541,DEF,buy,88.51,58
+++2022-10-05 03:23:34.231211,DEF,buy,89.54,80
+++2022-10-06 08:38:41.852557,DEF,buy,87.59,154
+++2022-10-07 13:55:19.786945,ABC,buy,90.68,34
+++2022-10-08 06:49:46.177126,ABC,buy,89.89,140
+++2022-10-09 14:17:12.301736,ABC,sell,91.78,61
+++2022-10-10 03:43:16.320758,DEF,buy,88.66,18
+++2022-10-10 19:39:08.241838,DEF,buy,88.72,25
+++2022-10-11 14:07:45.220367,DEF,sell,92.72,49
+++2022-10-12 14:29:36.601879,ABC,sell,93.97,14
+++2022-10-13 09:09:22.370903,DEF,sell,93.55,96
+++2022-10-13 21:15:45.187231,DEF,buy,90.23,88
+++2022-10-14 10:50:38.153341,DEF,buy,91.4,123
+++2022-10-15 04:03:24.643368,DEF,sell,96.16,34
+++2022-10-16 15:38:17.875437,DEF,sell,96.09,64
+++2022-10-17 22:00:01.855377,ABC,sell,95.96,94
+++2022-10-18 15:39:17.503370,ABC,buy,95.0,57
+++2022-10-19 09:05:34.485246,ABC,sell,96.64,64
+++2022-10-20 14:50:27.172731,DEF,sell,99.97,5
+++2022-10-21 15:55:55.544989,ABC,sell,97.82,15
+++2022-10-22 23:14:18.152676,ABC,sell,96.77,31
+++2022-10-23 19:14:25.190799,DEF,sell,94.66,31
+++2022-10-25 02:38:20.032151,DEF,buy,92.0,80
+++2022-10-26 13:48:38.007764,ABC,buy,89.1,86
+++2022-10-27 07:05:36.573876,ABC,buy,87.14,113
+++2022-10-27 22:59:27.297909,DEF,buy,88.56,155
+++2022-10-29 05:54:21.869827,DEF,sell,90.8,62
+++2022-10-30 02:02:05.810883,ABC,sell,90.1,28
+++2022-10-31 05:01:52.364643,DEF,sell,90.49,146
+++2022-10-31 23:40:29.967429,ABC,buy,85.7,64
+++2022-11-01 21:05:31.414981,ABC,sell,88.46,72
+++2022-11-02 18:54:08.015573,ABC,sell,88.53,84
+++2022-11-03 11:15:25.686163,DEF,buy,85.79,51
+++2022-11-04 05:25:54.067865,ABC,sell,87.44,41
+++2022-11-05 11:07:15.090221,DEF,sell,87.24,46
+++2022-11-06 06:39:59.752243,ABC,buy,84.4,22
+++2022-11-06 20:04:47.843898,DEF,sell,88.46,58
+++2022-11-07 19:03:43.258070,DEF,sell,90.74,27
+++2022-11-08 20:47:57.475132,ABC,sell,90.25,36
+++2022-11-10 04:21:57.753385,ABC,buy,86.71,64
+++2022-11-11 03:30:30.605204,DEF,sell,89.83,79
+++2022-11-11 22:15:05.838025,DEF,sell,90.87,49
+++2022-11-12 14:39:49.524825,DEF,buy,85.81,124
+++2022-11-13 20:35:41.235059,ABC,buy,86.11,121
+++2022-11-15 03:55:34.454210,DEF,buy,87.97,57
+++2022-11-16 01:20:35.398802,DEF,buy,87.46,8
+++2022-11-17 05:23:37.813890,ABC,buy,87.86,101
+++2022-11-18 13:19:46.921138,ABC,buy,86.88,31
+++2022-11-19 20:34:11.323217,ABC,sell,89.79,1
+++2022-11-20 23:13:27.048857,ABC,sell,90.09,18
+++2022-11-21 13:20:27.418945,ABC,buy,85.78,25
+++2022-11-22 17:05:01.180546,ABC,sell,89.33,74
+++2022-11-23 10:34:19.951069,DEF,buy,88.34,7
+++2022-11-24 14:34:22.752085,DEF,sell,88.5,16
+++2022-11-25 19:13:15.989129,DEF,buy,86.02,130
+++2022-11-27 02:04:08.835730,ABC,buy,86.89,125
+++2022-11-27 15:28:14.235416,ABC,buy,87.31,274
+++2022-11-28 08:25:39.688573,DEF,sell,89.33,32
+++2022-11-29 09:32:05.039686,ABC,sell,89.98,109
+++2022-11-30 18:42:44.445032,DEF,buy,86.86,50
+++2022-12-01 09:17:18.940234,ABC,sell,89.29,100
+++2022-12-01 22:20:16.168831,DEF,sell,90.56,1
+++2022-12-03 00:01:34.947655,ABC,buy,85.23,9
+++2022-12-04 06:53:39.257275,DEF,buy,85.11,101
+++2022-12-05 04:41:52.049376,ABC,sell,88.75,34
+++2022-12-06 12:57:09.124389,DEF,buy,85.85,182
+++2022-12-07 07:24:13.652170,DEF,buy,84.87,45
+++2022-12-08 05:11:20.747663,DEF,sell,87.1,43
+++2022-12-08 22:20:07.076545,ABC,buy,82.5,74
+++2022-12-10 03:23:49.254775,ABC,buy,82.11,52
+++2022-12-11 11:32:10.532744,ABC,sell,87.19,21
+++2022-12-12 01:39:47.401707,DEF,sell,86.78,42
+++2022-12-13 09:40:20.580769,DEF,buy,82.61,28
+++2022-12-14 07:44:38.847797,DEF,buy,82.59,41
+++2022-12-15 07:40:29.626245,DEF,sell,84.32,68
+++2022-12-16 01:04:57.620175,DEF,buy,78.82,6
+++2022-12-16 13:12:29.293678,DEF,buy,82.7,21
+++2022-12-17 12:39:50.145848,ABC,sell,86.6,63
+++2022-12-18 17:47:46.867654,ABC,sell,87.08,182
+++2022-12-19 11:35:33.976170,DEF,sell,87.35,55
+++2022-12-20 05:50:06.061376,DEF,sell,87.13,55
+++2022-12-20 21:38:42.881534,DEF,sell,84.91,154
+++2022-12-21 22:24:38.259518,ABC,buy,83.31,208
+++2022-12-22 12:15:56.217069,DEF,sell,85.27,99
+++2022-12-23 18:16:56.806372,DEF,sell,86.17,27
+++2022-12-24 18:14:59.481781,DEF,buy,84.0,161
+++2022-12-25 20:48:45.534384,DEF,buy,85.72,32
+++2022-12-26 12:26:59.794816,DEF,sell,87.19,41
+++2022-12-27 15:20:48.489550,DEF,buy,85.42,129
+++2022-12-29 01:17:23.360610,DEF,sell,85.06,56
+++2022-12-29 20:01:51.816200,DEF,buy,82.48,157
+++2022-12-30 18:47:36.915526,ABC,sell,87.38,59
+++2022-12-31 19:48:05.508808,ABC,buy,83.32,182
+++2023-01-01 15:54:41.894132,ABC,sell,85.52,103
+++2023-01-02 20:30:25.814125,ABC,sell,84.87,6
+++2023-01-03 11:45:23.924014,ABC,buy,83.79,19
+++2023-01-04 09:42:25.130975,ABC,buy,83.3,112
+++2023-01-05 17:49:49.910168,DEF,buy,84.61,138
+++2023-01-06 08:59:17.344997,DEF,buy,84.17,116
+++2023-01-07 06:55:32.144991,ABC,buy,84.78,95
+++2023-01-08 11:19:07.240460,DEF,sell,86.98,114
+++2023-01-09 08:59:59.941508,DEF,sell,88.05,124
+++2023-01-10 19:26:39.593764,ABC,buy,87.25,74
+++2023-01-12 05:22:20.856852,DEF,buy,83.01,2
+++2023-01-13 05:48:53.327929,ABC,buy,82.3,216
+++2023-01-14 00:48:25.410206,DEF,buy,82.58,1
+++2023-01-14 18:39:48.823186,DEF,buy,82.9,15
+++2023-01-15 16:43:38.318982,ABC,sell,85.36,183
+++2023-01-16 18:55:39.369166,DEF,buy,83.42,58
+++2023-01-17 15:05:27.917303,ABC,buy,83.77,47
+++2023-01-18 17:56:29.290991,DEF,buy,83.64,22
+++2023-01-20 01:59:38.356147,ABC,buy,83.8,177
+++2023-01-21 04:11:30.563594,DEF,buy,84.91,4
+++2023-01-21 22:20:15.154452,ABC,buy,82.74,31
+++2023-01-22 19:38:13.135669,ABC,sell,85.54,71
+++2023-01-24 06:34:20.154922,ABC,sell,87.21,29
+++2023-01-25 07:17:08.929662,DEF,buy,83.56,77
+++2023-01-26 01:55:21.587192,ABC,buy,82.82,32
+++2023-01-27 02:05:34.693188,DEF,sell,85.65,22
+++2023-01-28 03:44:30.943467,DEF,sell,84.8,38
+++2023-01-29 10:45:48.018139,ABC,sell,87.35,120
+++2023-01-30 10:29:34.790980,ABC,sell,86.93,103
+++2023-01-31 10:36:17.872487,ABC,buy,86.96,136
+++2023-02-01 00:43:51.102920,DEF,sell,87.22,162
+++2023-02-01 18:27:17.842477,ABC,sell,87.39,1
+++2023-02-02 19:50:16.087153,ABC,buy,87.4,89
+++2023-02-04 05:54:52.378455,DEF,buy,86.94,6
+++2023-02-05 13:53:50.281328,ABC,sell,87.41,141
+++2023-02-06 13:03:43.650099,DEF,buy,86.9,72
+++2023-02-07 11:31:38.604709,DEF,buy,86.03,0
+++2023-02-08 07:29:45.351020,ABC,sell,87.58,130
+++2023-02-09 10:34:52.204582,DEF,buy,86.8,72
+++2023-02-10 16:00:46.551617,ABC,sell,88.98,48
+++2023-02-11 17:16:37.165280,ABC,buy,86.63,1
+++2023-02-12 23:03:52.618134,ABC,buy,86.44,29
+++2023-02-14 02:56:31.274749,ABC,buy,84.96,53
+++2023-02-15 01:51:45.891442,DEF,sell,87.97,20
+++2023-02-15 15:51:45.624821,ABC,sell,88.26,166
+++2023-02-16 11:02:42.030423,ABC,sell,88.68,99
+++2023-02-17 07:54:41.198101,ABC,buy,89.55,132
+++2023-02-18 06:00:30.808953,ABC,sell,90.68,49
+++2023-02-18 22:52:26.583912,ABC,buy,87.66,2
+++2023-02-20 03:19:07.883859,ABC,buy,87.15,185
+++2023-02-21 14:16:20.233613,ABC,buy,87.84,39
+++2023-02-22 08:31:13.903229,ABC,buy,88.11,1
+++2023-02-23 14:49:35.594929,ABC,sell,91.02,77
+++2023-02-24 08:13:06.276923,ABC,buy,88.75,30
+++2023-02-25 02:30:47.344352,DEF,buy,89.04,109
+++2023-02-25 15:38:19.584942,ABC,sell,93.18,106
+++2023-02-26 15:20:03.633420,ABC,buy,89.05,56
+++2023-02-27 12:27:12.036732,DEF,buy,88.63,24
+++2023-02-28 03:54:25.116193,ABC,sell,91.47,62
+++2023-03-01 04:51:10.141170,ABC,buy,89.6,55
+++2023-03-02 13:44:45.563322,ABC,buy,86.82,0
+++2023-03-03 11:53:27.681694,ABC,sell,88.1,41
+++2023-03-04 10:02:52.255543,ABC,sell,88.58,143
+++2023-03-05 11:25:28.837758,DEF,sell,87.17,10
+++2023-03-06 00:16:48.481358,DEF,buy,85.09,117
+++2023-03-07 00:22:10.625648,ABC,sell,86.77,25
+++2023-03-07 20:41:32.514548,ABC,sell,85.49,100
+++2023-03-09 01:50:43.742831,ABC,sell,87.31,122
+++2023-03-09 23:02:19.280924,ABC,buy,88.25,30
+++2023-03-10 16:08:14.196641,DEF,buy,87.9,33
+++2023-03-11 13:06:07.560326,DEF,sell,91.59,50
+++2023-03-12 08:58:53.800007,ABC,sell,91.02,94
+++2023-03-13 00:30:43.758792,DEF,buy,89.1,114
+++2023-03-14 02:16:03.079692,DEF,buy,90.33,71
+++2023-03-15 07:05:01.344062,DEF,sell,92.14,49
+++2023-03-16 13:37:24.833597,ABC,sell,91.68,202
+++2023-03-18 00:58:30.095932,ABC,buy,89.99,112
+++2023-03-18 15:07:03.900181,DEF,sell,91.11,220
+++2023-03-19 09:01:37.128547,ABC,sell,89.72,32
+++2023-03-20 19:26:22.435849,ABC,buy,87.29,21
+++2023-03-22 07:19:21.605934,ABC,sell,91.59,97
+++2023-03-23 15:57:10.649700,ABC,buy,88.96,28
+++2023-03-24 22:35:37.951918,DEF,sell,92.06,116
+++2023-03-25 12:59:28.577859,DEF,buy,88.1,42
+++2023-03-26 17:49:47.314849,ABC,sell,93.49,0
+++2023-03-27 16:26:41.772703,ABC,sell,94.03,44
+++2023-03-28 12:09:29.483046,DEF,buy,92.41,72
+++2023-03-29 12:15:58.952446,DEF,sell,94.57,150
+++2023-03-30 12:05:51.507517,DEF,buy,91.34,98
+++2023-03-31 14:40:44.307942,DEF,sell,92.18,171
+++2023-04-01 08:44:35.940322,ABC,buy,91.29,116
+++2023-04-02 01:19:26.173869,ABC,sell,92.75,151
+++2023-04-03 09:30:21.043098,ABC,buy,91.27,73
+++2023-04-04 15:02:10.594016,DEF,buy,90.97,69
+++2023-04-05 23:39:02.650468,DEF,sell,94.36,23
+++2023-04-06 21:40:22.489258,ABC,sell,92.93,106
+++2023-04-07 18:10:41.199336,ABC,sell,92.09,38
+++2023-04-08 20:01:59.538406,ABC,sell,91.87,71
+++2023-04-09 20:03:20.082844,DEF,sell,92.14,38
+++2023-04-10 13:28:03.494522,ABC,buy,91.76,75
+++2023-04-11 21:21:13.215189,ABC,buy,94.08,85
+++2023-04-12 20:47:42.652214,DEF,buy,89.55,54
+++2023-04-13 22:22:34.882361,ABC,sell,91.39,68
+++2023-04-14 18:01:41.527836,ABC,sell,91.05,66
+++2023-04-15 21:56:25.954170,ABC,sell,91.28,44
+++2023-04-17 05:42:03.407601,DEF,sell,92.07,309
+++2023-04-18 12:29:02.046025,ABC,buy,91.67,165
+++2023-04-19 04:50:26.162191,ABC,buy,90.57,116
+++2023-04-19 21:43:44.975374,DEF,sell,92.51,78
+++2023-04-20 11:46:24.412727,DEF,sell,92.68,10
+++2023-04-21 16:27:49.911587,ABC,sell,90.7,97
+++2023-04-22 12:54:20.245154,ABC,buy,88.78,24
+++2023-04-23 16:31:24.030879,ABC,sell,90.6,10
+++2023-04-24 13:52:50.136456,DEF,buy,88.91,97
+++2023-04-25 09:46:30.364784,ABC,sell,90.23,12
+++2023-04-26 04:46:33.893763,DEF,sell,87.8,36
+++2023-04-27 14:22:50.456142,DEF,buy,86.97,36
+++2023-04-28 04:49:46.211958,ABC,buy,86.95,91
+++2023-04-29 01:48:51.589551,DEF,buy,87.67,218
+++2023-04-29 19:29:25.399524,DEF,sell,89.74,66
+++2023-04-30 19:49:28.826928,ABC,buy,87.07,124
+++2023-05-01 20:55:04.062797,DEF,buy,88.56,78
+++2023-05-02 20:19:24.480846,ABC,buy,87.27,72
+++2023-05-04 01:44:23.615510,DEF,sell,90.52,30
+++2023-05-04 14:04:04.107108,DEF,buy,87.44,105
+++2023-05-05 18:12:05.988554,ABC,buy,90.6,94
+++2023-05-06 20:58:04.980412,DEF,sell,92.12,104
+++2023-05-08 03:10:45.323558,DEF,sell,90.63,35
+++2023-05-08 18:26:46.283250,DEF,sell,90.26,85
+++2023-05-09 16:05:07.841797,DEF,buy,90.77,15
+++2023-05-10 18:01:47.743809,ABC,buy,89.52,61
+++2023-05-11 14:49:30.662966,DEF,buy,89.59,266
+++2023-05-12 10:01:47.794162,ABC,buy,87.94,42
+++2023-05-13 07:11:56.957857,ABC,buy,87.95,21
+++2023-05-14 02:41:42.311557,ABC,sell,89.53,21
+++2023-05-15 05:51:29.951368,DEF,buy,86.37,27
+++2023-05-16 13:12:55.060661,ABC,sell,89.05,162
+++2023-05-17 22:43:14.953408,DEF,buy,87.94,121
+++2023-05-19 00:06:46.717335,DEF,buy,88.56,119
+++2023-05-19 12:48:39.243120,ABC,sell,89.8,179
+++2023-05-20 21:54:02.271550,DEF,sell,90.88,144
+++2023-05-22 01:38:51.241220,ABC,sell,88.46,75
+++2023-05-23 00:39:54.702241,DEF,buy,85.9,60
+++2023-05-24 11:31:02.402748,DEF,sell,88.08,63
+++2023-05-25 18:08:56.434671,ABC,buy,85.97,133
+++2023-05-26 23:32:02.775990,ABC,buy,86.71,18
+++2023-05-27 15:36:33.292894,ABC,buy,87.0,238
+++2023-05-29 03:19:09.494860,DEF,sell,92.91,70
+++2023-05-29 20:23:11.758921,ABC,sell,91.85,9
+++2023-05-31 05:32:58.986402,ABC,sell,90.93,61
+++2023-06-01 15:25:34.560783,DEF,buy,87.9,45
+++2023-06-03 02:12:57.522144,DEF,buy,88.84,87
+++2023-06-04 14:00:54.356381,ABC,sell,93.17,48
+++2023-06-06 01:27:27.976947,ABC,sell,91.34,124
+++2023-06-07 12:05:46.054604,DEF,sell,93.21,101
+++2023-06-08 15:11:28.937774,DEF,sell,92.92,12
+++2023-06-09 20:35:00.094628,DEF,sell,91.77,15
+++2023-06-10 23:39:55.741120,ABC,sell,94.41,160
+++2023-06-12 09:18:29.860705,ABC,sell,92.77,188
+++2023-06-13 08:03:24.480430,ABC,sell,93.11,101
+++2023-06-14 19:19:18.760074,ABC,buy,89.12,197
+++2023-06-16 06:13:12.802924,DEF,sell,90.54,65
+++2023-06-17 09:51:09.732523,DEF,buy,90.33,12
+++2023-06-18 16:47:07.801043,ABC,buy,89.63,9
+++2023-06-19 15:05:06.885374,DEF,sell,93.7,50
+++2023-06-20 16:42:40.676078,DEF,buy,89.35,76
+++2023-06-22 04:37:51.485390,ABC,sell,90.95,133
+++2023-06-22 18:41:58.124665,DEF,buy,87.07,72
+++2023-06-23 21:21:26.740902,DEF,buy,88.4,151
+++2023-06-25 08:57:47.996568,DEF,buy,87.2,114
+++2023-06-26 07:36:55.198396,DEF,buy,85.94,35
+++2023-06-27 06:34:19.393621,DEF,sell,87.96,30
+++2023-06-28 16:46:25.582466,ABC,sell,87.83,96
+++2023-06-30 04:18:02.172431,DEF,buy,86.03,133
+++2023-06-30 21:56:03.223566,DEF,buy,88.06,17
+++2023-07-01 14:20:15.453329,ABC,sell,89.64,160
+++2023-07-02 11:33:37.523006,ABC,buy,88.12,92
+++2023-07-03 12:51:27.321335,ABC,sell,91.38,171
+++2023-07-04 14:00:08.271261,DEF,sell,91.7,108
+++2023-07-05 21:25:25.560732,ABC,sell,92.6,6
+++2023-07-06 12:41:37.136733,ABC,buy,90.12,47
+++2023-07-07 05:50:58.838494,DEF,buy,90.88,17
+++2023-07-08 13:21:19.746578,DEF,buy,92.11,27
+++2023-07-09 15:07:04.828547,ABC,buy,92.69,104
+++2023-07-10 15:16:39.383170,ABC,sell,95.73,22
+++2023-07-11 05:27:14.061780,ABC,sell,96.25,115
+++2023-07-12 08:04:27.987416,ABC,buy,93.46,42
+++2023-07-12 22:54:32.253132,DEF,buy,93.35,15
+++2023-07-13 12:37:42.305832,ABC,buy,93.24,89
+++2023-07-14 02:23:23.982489,DEF,buy,92.33,134
+++2023-07-14 16:25:23.064154,ABC,buy,92.71,126
+++2023-07-16 02:10:17.957288,ABC,buy,92.41,157
+++2023-07-17 01:30:06.518618,DEF,sell,95.02,19
+++2023-07-17 14:24:42.707699,DEF,sell,93.75,40
+++2023-07-19 01:40:03.000958,ABC,sell,90.81,142
+++2023-07-19 21:04:14.003036,ABC,buy,89.93,41
+++2023-07-20 23:22:45.644430,DEF,buy,88.57,77
+++2023-07-22 10:53:18.801963,DEF,buy,89.22,143
+++2023-07-23 11:34:55.481193,ABC,buy,91.43,27
+++2023-07-24 19:47:19.571840,DEF,sell,94.94,71
+++2023-07-25 09:04:40.949744,DEF,buy,90.82,88
+++2023-07-26 16:34:28.922993,DEF,buy,88.11,84
+++2023-07-28 03:37:25.543433,DEF,sell,90.91,82
+++2023-07-28 19:49:17.655921,DEF,sell,90.08,187
+++2023-07-29 20:17:43.009071,ABC,buy,88.59,90
+++2023-07-31 04:49:16.489519,ABC,sell,92.8,109
+++2023-08-01 07:23:04.235842,ABC,buy,88.31,154
+++2023-08-02 10:39:30.341323,ABC,buy,89.37,79
+++2023-08-03 14:53:03.620387,DEF,buy,91.3,145
+++2023-08-04 09:19:51.735446,ABC,buy,90.06,24
+++2023-08-05 18:37:51.168197,ABC,buy,88.72,155
+++2023-08-06 09:35:15.208491,ABC,buy,90.9,209
+++2023-08-07 16:15:31.516002,ABC,buy,89.25,24
+++2023-08-08 05:08:51.576445,ABC,buy,87.12,61
+++2023-08-09 02:09:27.561051,ABC,buy,87.38,45
+++2023-08-09 14:49:00.209819,ABC,sell,89.15,35
+++2023-08-11 00:10:40.120356,ABC,buy,87.29,93
+++2023-08-12 08:19:10.098517,DEF,sell,89.98,52
+++2023-08-13 18:14:09.632993,ABC,buy,86.7,31
+++2023-08-14 18:19:11.250225,ABC,sell,87.56,125
+++2023-08-15 12:30:37.181473,DEF,buy,86.21,93
+++2023-08-16 11:56:32.206979,DEF,sell,89.24,18
+++2023-08-17 21:43:33.599736,DEF,buy,86.69,52
+++2023-08-19 05:48:37.328625,ABC,buy,85.38,11
+++2023-08-20 06:36:29.398400,ABC,buy,86.64,24
+++2023-08-21 13:52:21.893069,ABC,sell,90.96,13
+++2023-08-23 00:28:33.276825,DEF,sell,91.19,123
+++2023-08-24 03:43:48.772888,DEF,sell,92.56,10
+++2023-08-25 11:53:47.638597,ABC,sell,90.08,38
+++2023-08-26 15:31:55.820035,DEF,buy,89.26,54
+++2023-08-27 13:53:39.204627,ABC,buy,89.4,83
+++2023-08-28 23:17:09.028004,ABC,buy,90.2,41
+++2023-08-29 22:43:54.432461,ABC,buy,91.39,71
+++2023-08-30 16:41:31.924781,ABC,sell,92.13,20
+++2023-08-31 14:58:10.205630,DEF,sell,92.31,15
+++2023-09-01 09:02:02.324862,DEF,sell,93.16,119
+++2023-09-02 16:39:50.443150,DEF,buy,91.32,226
+++2023-09-03 23:14:27.456528,DEF,buy,92.36,78
+++2023-09-05 01:42:02.632794,ABC,buy,90.42,0
+++2023-09-06 00:15:51.827622,ABC,buy,91.38,5
+++2023-09-06 16:24:37.113008,DEF,buy,92.36,243
+++2023-09-07 12:08:32.823188,ABC,buy,94.25,120
+++2023-09-08 12:41:56.109149,ABC,sell,94.26,89
+++2023-09-09 16:54:27.164990,ABC,sell,94.98,179
+++2023-09-11 00:44:11.823364,ABC,sell,95.31,46
+++2023-09-12 11:25:02.194673,DEF,buy,92.57,145
+++2023-09-13 15:48:10.657019,DEF,buy,92.29,130
+++2023-09-14 16:42:22.689995,ABC,buy,91.61,25
+++2023-09-15 23:16:46.938978,ABC,sell,94.86,127
+++2023-09-16 21:45:59.591369,ABC,sell,95.88,78
+++2023-09-18 08:52:14.693401,DEF,buy,91.31,25
+++2023-09-18 22:09:41.777058,ABC,sell,94.54,24
+++2023-09-19 12:06:07.435893,ABC,buy,92.66,102
+++2023-09-20 13:52:57.080871,DEF,buy,90.21,21
+++2023-09-22 00:06:22.211660,ABC,buy,91.23,161
+++2023-09-22 20:15:51.408955,DEF,buy,93.57,64
+++2023-09-23 10:53:21.795632,DEF,sell,97.01,16
+++2023-09-24 13:47:26.306975,DEF,buy,95.46,168
+++2023-09-25 02:23:56.271048,DEF,sell,98.29,10
+++2023-09-25 22:56:22.696217,ABC,sell,98.42,67
+++2023-09-27 05:52:50.422744,DEF,sell,97.32,101
+++2023-09-28 08:56:31.062121,ABC,sell,96.47,23
+++2023-09-29 05:33:57.174717,ABC,buy,95.39,11
+++2023-09-30 09:06:30.793353,ABC,sell,99.06,122
+++2023-10-01 02:17:11.680513,ABC,sell,97.92,9
+++2023-10-02 01:29:52.878457,ABC,buy,96.32,21
+++2023-10-03 03:07:44.593699,ABC,sell,99.58,49
+++2023-10-04 08:40:41.985235,ABC,buy,98.12,6
+++2023-10-05 09:17:14.855530,ABC,buy,97.47,43
+++2023-10-06 04:45:49.744017,ABC,sell,99.48,7
+++2023-10-06 23:03:47.965134,ABC,buy,96.72,305
+++2023-10-07 11:33:36.397729,DEF,sell,98.3,146
+++2023-10-08 07:39:15.293243,DEF,sell,100.68,282
+++2023-10-09 19:08:52.593894,DEF,sell,101.97,131
+++2023-10-10 10:38:57.677433,DEF,buy,99.54,107
+++2023-10-11 22:03:38.186412,DEF,buy,99.4,72
+++2023-10-12 17:18:23.717228,DEF,buy,99.29,33
+++2023-10-13 15:58:57.919362,DEF,sell,100.96,49
+++2023-10-14 08:23:21.525806,DEF,buy,99.6,110
+++2023-10-15 12:27:20.463605,DEF,buy,98.56,89
+++2023-10-16 06:05:15.983764,DEF,sell,100.17,35
+++2023-10-17 10:58:18.501174,ABC,buy,98.08,76
+++2023-10-18 15:50:00.641144,DEF,buy,97.57,81
+++2023-10-19 20:25:04.460115,ABC,buy,98.9,8
+++2023-10-20 19:05:20.305894,DEF,buy,97.14,148
+++2023-10-21 11:46:33.970828,DEF,sell,99.52,5
+++2023-10-22 14:41:57.629958,DEF,sell,101.07,109
+++2023-10-24 00:10:41.944881,ABC,sell,101.1,172
+++2023-10-25 05:38:34.434146,DEF,sell,102.14,73
+++2023-10-26 09:33:29.117857,DEF,sell,102.28,139
+++2023-10-27 00:24:38.529376,ABC,sell,103.01,98
+++2023-10-27 16:09:40.976242,ABC,buy,100.84,57
+++2023-10-28 19:09:31.446546,ABC,sell,99.98,72
+++2023-10-29 17:47:21.993418,ABC,buy,99.38,46
+++2023-10-30 19:11:19.680684,DEF,sell,102.91,239
+++2023-10-31 21:37:58.437022,DEF,sell,104.66,67
+++2023-11-01 23:15:39.961086,ABC,sell,101.8,13
+++2023-11-02 19:24:31.982920,ABC,buy,99.41,120
+++2023-11-03 15:09:44.629175,DEF,buy,98.01,33
+++2023-11-04 08:17:01.187110,ABC,sell,100.21,84
+++2023-11-05 07:30:58.153090,DEF,sell,99.4,50
+++2023-11-06 16:28:21.308385,ABC,buy,97.4,21
+++2023-11-07 09:21:28.659327,ABC,sell,102.2,169
+++2023-11-08 17:42:13.436968,ABC,sell,102.12,60
+++2023-11-10 01:06:07.434395,DEF,buy,100.07,183
+++2023-11-11 06:14:14.080885,DEF,buy,100.77,9
+++2023-11-12 02:29:04.472709,DEF,buy,100.95,175
+++2023-11-13 13:40:13.793581,ABC,sell,103.23,1
+++2023-11-14 06:43:42.242490,DEF,buy,100.72,101
+++2023-11-15 02:26:27.808282,ABC,buy,100.81,75
+++2023-11-16 09:34:57.032824,ABC,buy,102.14,82
+++2023-11-17 10:29:55.210262,ABC,buy,101.82,177
+++2023-11-18 09:41:16.637285,DEF,sell,104.92,125
+++2023-11-19 11:58:41.268220,ABC,buy,101.07,55
+++2023-11-20 06:37:37.075348,ABC,sell,104.18,51
+++2023-11-21 01:38:32.300365,DEF,sell,103.54,115
+++2023-11-22 10:47:06.087450,ABC,sell,105.03,47
+++2023-11-23 21:56:18.970255,ABC,buy,102.52,174
+++2023-11-24 21:18:39.396090,ABC,buy,101.78,103
+++2023-11-26 08:55:45.360056,ABC,sell,102.91,5
+++2023-11-27 16:56:01.404311,DEF,sell,104.01,305
+++2023-11-29 03:54:54.513440,DEF,sell,104.18,51
+++2023-11-30 13:34:04.985927,ABC,sell,102.2,52
+++2023-12-01 14:31:44.343937,DEF,buy,102.47,23
+++2023-12-02 03:35:47.837837,DEF,sell,103.22,90
+++2023-12-03 05:09:47.937281,ABC,buy,102.33,76
+++2023-12-03 20:28:20.062770,ABC,sell,104.15,46
+++2023-12-05 06:28:25.244244,DEF,sell,105.39,135
+++2023-12-06 05:14:01.659691,DEF,buy,103.01,119
+++2023-12-06 21:52:04.838762,ABC,buy,103.44,137
+++2023-12-08 03:27:57.784722,ABC,buy,102.95,154
+++2023-12-08 19:17:48.627925,ABC,buy,104.49,200
+++2023-12-09 19:05:01.747075,ABC,sell,104.28,211
+++2023-12-10 15:43:09.146037,ABC,sell,105.8,51
+++2023-12-11 08:21:54.589367,ABC,sell,106.22,97
+++2023-12-11 20:51:00.954873,ABC,sell,106.0,105
+++2023-12-13 00:55:44.307877,ABC,buy,103.7,88
+++2023-12-14 02:59:06.890918,ABC,buy,103.39,96
+++2023-12-15 12:28:40.332153,ABC,buy,104.5,136
+++2023-12-16 06:45:17.021466,ABC,buy,100.73,185
+++2023-12-17 06:21:56.223708,ABC,buy,103.5,52
+++2023-12-18 06:58:57.897972,ABC,sell,106.91,118
+++2023-12-19 17:31:10.266563,DEF,sell,106.65,140
+++2023-12-20 09:08:05.645708,ABC,sell,105.02,53
+++2023-12-21 03:39:32.051180,DEF,buy,103.4,18
+++2023-12-22 09:22:48.824301,DEF,buy,102.16,38
+++2023-12-23 16:50:49.309111,DEF,buy,103.76,154
+++2023-12-24 21:55:10.608415,ABC,buy,104.23,118
+++2023-12-25 14:59:20.492220,ABC,buy,105.45,65
+++2023-12-27 00:08:17.482758,DEF,buy,105.95,145
+++2023-12-27 22:52:15.641019,DEF,buy,106.7,236
+++2023-12-28 23:09:02.389510,ABC,sell,109.09,91
+++2023-12-29 22:41:05.926186,DEF,sell,110.85,52
+++2023-12-30 10:52:12.403612,DEF,sell,110.5,107
+++2023-12-31 04:22:58.702656,ABC,sell,108.73,117
+++2024-01-01 15:46:45.687152,DEF,sell,110.54,96
+++2024-01-02 23:36:27.278885,DEF,buy,110.37,120
+++2024-01-04 01:13:42.055786,DEF,buy,111.0,66
+++2024-01-04 16:37:11.014440,ABC,sell,112.85,104
+++2024-01-05 22:46:35.900027,DEF,buy,108.76,9
+++2024-01-06 21:32:05.087230,DEF,sell,111.98,157
+++2024-01-08 03:06:42.170619,DEF,sell,109.84,182
+++2024-01-09 01:20:15.959344,ABC,sell,110.11,13
+++2024-01-09 19:29:09.387744,ABC,buy,108.84,28
+++2024-01-10 22:22:55.813324,DEF,buy,108.77,88
+++2024-01-12 07:27:02.566412,DEF,sell,110.18,126
+++2024-01-12 22:33:45.152941,ABC,sell,109.02,131
+++2024-01-14 07:41:20.711656,ABC,sell,108.07,124
+++2024-01-14 21:10:14.174666,DEF,sell,108.36,118
+++2024-01-15 23:43:02.551931,ABC,buy,104.09,0
+++2024-01-17 04:10:31.537302,DEF,sell,107.62,186
+++2024-01-18 03:33:30.497442,ABC,sell,109.65,80
+++2024-01-19 02:53:57.473813,ABC,sell,109.24,108
+++2024-01-20 07:52:10.337703,DEF,sell,110.04,58
+++2024-01-21 08:11:01.812291,DEF,sell,108.96,32
+++2024-01-21 22:36:09.210959,ABC,sell,107.6,98
+++2024-01-23 06:31:31.187251,ABC,sell,109.14,211
+++2024-01-24 00:45:28.383711,DEF,sell,109.82,131
+++2024-01-24 21:54:53.664044,DEF,sell,108.91,126
+++2024-01-26 04:39:39.178731,DEF,buy,107.2,30
+++2024-01-26 18:28:15.684474,DEF,sell,111.63,69
+++2024-01-27 10:20:04.985486,ABC,sell,108.69,140
+++2024-01-28 08:23:43.522705,ABC,buy,107.0,19
+++2024-01-29 10:47:50.065081,ABC,sell,109.48,58
+++2024-01-30 22:38:50.999795,ABC,sell,108.89,0
++-- 
++2.40.0.windows.1
++
+diff --git a/multi_commit.patch b/multi_commit.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..638e8c8b6cae7e6a313cde7087898b740a7933c7
+GIT binary patch
+literal 206758
+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
+Ke{b6P#Qy~Yr`+%W
+
+literal 0
+HcmV?d00001
+
+-- 
+2.40.0.windows.1
+
